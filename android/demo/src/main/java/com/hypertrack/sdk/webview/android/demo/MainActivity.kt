@@ -1,4 +1,4 @@
-package com.hypertrack.quickstart.android.webview
+package com.hypertrack.sdk.webview.android.demo
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -6,7 +6,6 @@ import android.os.PersistableBundle
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
-import com.hypertrack.quickstart.android.webview.sdkwebview.HyperTrackJsApiJava
 import com.hypertrack.sdk.HyperTrack
 
 class MainActivity : AppCompatActivity() {

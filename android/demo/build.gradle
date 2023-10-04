@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.hypertrack.quickstart.android.webview'
+    namespace 'com.hypertrack.sdk.webview.android.demo'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.hypertrack.quickstart.android.webview"
+        applicationId "com.hypertrack.sdk.webview.android.demo"
         minSdk 23
         targetSdk 33
         versionCode 1

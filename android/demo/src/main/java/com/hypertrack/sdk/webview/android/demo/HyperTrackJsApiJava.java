@@ -1,4 +1,4 @@
-package com.hypertrack.quickstart.android.webview.sdkwebview;
+package com.hypertrack.sdk.webview.android.demo;
 
 import android.location.Location;
 import android.util.Log;
