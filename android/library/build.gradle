@@ -72,4 +72,7 @@ dependencies {
     implementation "com.hypertrack:sdk-android:${version_hypertrack_sdk}"
     implementation "com.hypertrack:location-services-google:${version_hypertrack_sdk}"
     implementation "com.hypertrack:push-service-firebase:${version_hypertrack_sdk}"
+
+    testImplementation "junit:junit:$version_junit"
+
 }
