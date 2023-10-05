@@ -54,7 +54,7 @@ internal object WebViewSerialization {
         return Success(deviceId[KEY_VALUE] as String)
     }
 
-    private fun deserializeHyperTrackErrorsFromInternalFormat(
+    fun deserializeHyperTrackErrorsFromInternalFormat(
         hyperTrackErrors: List<Serialized>
     ): WrapperResult<List<String>> {
         return hyperTrackErrors.map { error ->
@@ -162,7 +162,15 @@ internal object WebViewSerialization {
 
 }
 
-internal fun WrapperResult<Serialized>.toJsResponse(): String {
+internal fun List<String>.toJsResponse(): String {
+    return this.toJSONArray().toString()
+}
+
+internal fun Serialized.toJsResponse(): String {
+    return this.toJSONObject().toString()
+}
+
+internal fun <T> WrapperResult<T>.toJsResponse(): String {
     return when (this) {
         is Success -> {
             mapOf(

@@ -4,15 +4,16 @@ import android.nfc.Tag
 import android.util.Log
 import android.webkit.JavascriptInterface
 import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeDeviceIdFromInternalFormat
+import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeHyperTrackErrorsFromInternalFormat
 import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeLocationResponseFromInternalFormat
 import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeLocationWithDeviationResponseFromInternalFormat
 import com.hypertrack.sdk.webview.android.WebViewSerialization.serializeGeotagDataToInternalFormat
 import com.hypertrack.sdk.webview.android.WebViewSerialization.serializeIsTrackingToInternalFormat
 import com.hypertrack.sdk.webview.android.common.Failure
 import com.hypertrack.sdk.webview.android.common.HyperTrackSdkWrapper
+import com.hypertrack.sdk.webview.android.common.Serialized
 import com.hypertrack.sdk.webview.android.common.Success
 import com.hypertrack.sdk.webview.android.common.WrapperResult
-import org.json.JSONObject
 
 object WebViewInterfaceWrapper {
 
@@ -51,7 +52,17 @@ object WebViewInterfaceWrapper {
     }
 
     fun getErrors(): String {
-        return ""
+        return HyperTrackSdkWrapper
+            .getErrors()
+            .flatMapSuccess {
+                deserializeHyperTrackErrorsFromInternalFormat(it)
+            }
+            .swallowFailureAndLogError(
+                "getErrors", listOf(
+                    "wrapperError"
+                )
+            )
+            .toJsResponse()
     }
 
     fun getIsAvailable(): String {
@@ -62,8 +73,15 @@ object WebViewInterfaceWrapper {
         return ""
     }
 
-    fun getLocation(): String {
-        return ""
+    fun getLocation(): String? {
+        return HyperTrackSdkWrapper
+            .getLocation()
+            .flatMapSuccess {
+                deserializeLocationResponseFromInternalFormat(it)
+            }
+            .mapSuccess { it as Serialized? }
+            .swallowFailureAndLogError("getLocation", null)
+            ?.toJsResponse()
     }
 
     fun getMetadata(): String {

@@ -26,37 +26,37 @@ public class HyperTrackWebViewJsApi {
 
     @JavascriptInterface
     public String getErrors() {
-        return null;
+        return WebViewInterfaceWrapper.INSTANCE.getErrors();
     }
 
     @JavascriptInterface
     public String getIsAvailable() {
-        return null;
+        return WebViewInterfaceWrapper.INSTANCE.getIsAvailable();
     }
 
     @JavascriptInterface
     public String getIsTracking() {
-        return null;
+        return WebViewInterfaceWrapper.INSTANCE.getIsTracking();
     }
 
     @JavascriptInterface
     public String getLocation() {
-        return null;
+        return WebViewInterfaceWrapper.INSTANCE.getLocation();
     }
 
     @JavascriptInterface
     public String getMetadata() {
-        return null;
+        return WebViewInterfaceWrapper.INSTANCE.getMetadata();
     }
 
     @JavascriptInterface
     public String getName() {
-        return null;
+        return WebViewInterfaceWrapper.INSTANCE.getName();
     }
 
     @JavascriptInterface
     public String setIsAvailable() {
-        return null;
+        return WebViewInterfaceWrapper.INSTANCE.setIsAvailable();
     }
 
     @JavascriptInterface
@@ -66,12 +66,12 @@ public class HyperTrackWebViewJsApi {
 
     @JavascriptInterface
     public String setMetadata() {
-        return null;
+        return WebViewInterfaceWrapper.INSTANCE.setMetadata();
     }
 
     @JavascriptInterface
     public String setName() {
-        return null;
+        return WebViewInterfaceWrapper.INSTANCE.setName();
     }
 
 }

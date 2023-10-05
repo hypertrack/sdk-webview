@@ -62,6 +62,24 @@ function addGeotagWithExpectedLocation() {
     }
 }
 
+function getErrors() {
+    try {
+        let errors = HyperTrack.getErrors();
+        alert(JSON.stringify(JSON.parse(errors), null, 2));
+    } catch (e) {
+        alert(e);
+    }
+}
+
+function getLocation() {
+    try {
+        let location = HyperTrack.getLocation();
+        alert(JSON.stringify(JSON.parse(location), null, 2));
+    } catch (e) {
+        alert(e);
+    }
+}
+
 function setMetadata() {
     try {
         HyperTrack.setMetadata(
