@@ -17,6 +17,7 @@ private const val KEY_LOCATION = "location"
 private const val KEY_TYPE = "type"
 private const val KEY_VALUE = "value"
 
+private const val TYPE_DEVICE_ID = "deviceID"
 private const val TYPE_SUCCESS = "success"
 private const val TYPE_FAILURE = "failure"
 
@@ -33,6 +34,24 @@ internal object WebViewSerialization {
                 JSONObject(it).toMap()
             }
         )
+    }
+
+    fun serializeIsTrackingToInternalFormat(
+        isTracking: Boolean
+    ): Serialized {
+        return mapOf(
+            KEY_TYPE to "isTracking",
+            KEY_VALUE to isTracking
+        )
+    }
+
+    fun deserializeDeviceIdFromInternalFormat(
+        deviceId: Serialized
+    ): WrapperResult<String> {
+        if (deviceId[KEY_TYPE] != TYPE_DEVICE_ID) {
+            return Failure(Exception("Invalid device id type: $deviceId"))
+        }
+        return Success(deviceId[KEY_VALUE] as String)
     }
 
     private fun deserializeHyperTrackErrorsFromInternalFormat(

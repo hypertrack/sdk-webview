@@ -13,12 +13,15 @@ public class HyperTrackWebViewJsApi {
 
     @JavascriptInterface
     public String addGeotagWithExpectedLocation(String dataJsonString, String expectedLocationJsonString) {
-        return null;
+        return WebViewInterfaceWrapper.INSTANCE.addGeotagWithExpectedLocation(
+                dataJsonString,
+                expectedLocationJsonString
+        );
     }
 
     @JavascriptInterface
-    public String getDeviceID() {
-        return null;
+    public String getDeviceId() {
+        return WebViewInterfaceWrapper.INSTANCE.getDeviceId();
     }
 
     @JavascriptInterface
@@ -57,8 +60,8 @@ public class HyperTrackWebViewJsApi {
     }
 
     @JavascriptInterface
-    public String setIsTracking() {
-        return null;
+    public void setIsTracking(boolean isTracking) {
+        WebViewInterfaceWrapper.INSTANCE.setIsTracking(isTracking);
     }
 
     @JavascriptInterface

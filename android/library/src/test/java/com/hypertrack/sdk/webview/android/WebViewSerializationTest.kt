@@ -7,6 +7,17 @@ import org.junit.Test
 class WebViewSerializationTest {
 
     @Test
+    fun deviceId() {
+        val serialized = mapOf(
+            "type" to "deviceID",
+            "value" to "deviceId"
+        )
+        val expected = "deviceId"
+        val value = WebViewSerialization.deserializeDeviceIdFromInternalFormat(serialized)
+        assertEquals(expected, (value as Success).success)
+    }
+
+    @Test
     fun locationResponseSuccess() {
         val serialized = mapOf(
             "type" to "success",
