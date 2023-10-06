@@ -82,13 +82,14 @@ function getLocation() {
 
 function setMetadata() {
     try {
-        HyperTrack.setMetadata(
+        let result = HyperTrack.setMetadata(
             JSON.stringify(
                 {
                     "metadata_field": "test_metadata_value"
                 }
             )
         );
+        alert(JSON.stringify(JSON.parse(result), null, 2));
     } catch (e) {
         alert(e);
     }

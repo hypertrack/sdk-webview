@@ -9,11 +9,14 @@ import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeLocati
 import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeLocationWithDeviationResponseFromInternalFormat
 import com.hypertrack.sdk.webview.android.WebViewSerialization.serializeGeotagDataToInternalFormat
 import com.hypertrack.sdk.webview.android.WebViewSerialization.serializeIsTrackingToInternalFormat
+import com.hypertrack.sdk.webview.android.WebViewSerialization.serializeMetadataToInternalFormat
+import com.hypertrack.sdk.webview.android.WebViewSerialization.serializeNameToInternalFormat
 import com.hypertrack.sdk.webview.android.common.Failure
 import com.hypertrack.sdk.webview.android.common.HyperTrackSdkWrapper
 import com.hypertrack.sdk.webview.android.common.Serialized
 import com.hypertrack.sdk.webview.android.common.Success
 import com.hypertrack.sdk.webview.android.common.WrapperResult
+import org.json.JSONObject
 
 object WebViewInterfaceWrapper {
 
@@ -22,9 +25,11 @@ object WebViewInterfaceWrapper {
     fun addGeotag(dataJsonString: String): String {
         return HyperTrackSdkWrapper.addGeotag(
             serializeGeotagDataToInternalFormat(dataJsonString, null)
-        ).flatMapSuccess {
-            deserializeLocationResponseFromInternalFormat(it)
-        }.toJsResponse()
+        )
+            .flatMapSuccess {
+                deserializeLocationResponseFromInternalFormat(it)
+            }
+            .toJsResponse()
     }
 
     fun addGeotagWithExpectedLocation(
@@ -65,14 +70,6 @@ object WebViewInterfaceWrapper {
             .toJsResponse()
     }
 
-    fun getIsAvailable(): String {
-        return ""
-    }
-
-    fun getIsTracking(): String {
-        return ""
-    }
-
     fun getLocation(): String? {
         return HyperTrackSdkWrapper
             .getLocation()
@@ -84,18 +81,6 @@ object WebViewInterfaceWrapper {
             ?.toJsResponse()
     }
 
-    fun getMetadata(): String {
-        return ""
-    }
-
-    fun getName(): String {
-        return ""
-    }
-
-    fun setIsAvailable(): String {
-        return ""
-    }
-
     fun setIsTracking(isTracking: Boolean) {
         return HyperTrackSdkWrapper
             .setIsTracking(
@@ -104,12 +89,20 @@ object WebViewInterfaceWrapper {
             .swallowFailureAndLogError("setIsTracking", Unit)
     }
 
-    fun setMetadata(): String {
-        return ""
+    fun setMetadata(metadataString: String): String {
+        return WrapperResult.tryAsResult {
+            JSONObject(metadataString).toMap()
+        }
+            .flatMapSuccess {
+                HyperTrackSdkWrapper.setMetadata(serializeMetadataToInternalFormat(it))
+            }
+            .toJsResponse()
     }
 
-    fun setName(): String {
-        return ""
+    fun setName(name: String) {
+        return HyperTrackSdkWrapper
+            .setName(serializeNameToInternalFormat(name))
+            .swallowFailureAndLogError("setName", Unit)
     }
 
     private fun <T> WrapperResult<T>.swallowFailureAndLogError(

@@ -20,6 +20,9 @@ private const val KEY_VALUE = "value"
 private const val TYPE_DEVICE_ID = "deviceID"
 private const val TYPE_SUCCESS = "success"
 private const val TYPE_FAILURE = "failure"
+private const val TYPE_LOCATION = "location"
+private const val TYPE_METADATA = "metadata"
+private const val TYPE_NAME = "name"
 
 @Suppress("UNCHECKED_CAST")
 internal object WebViewSerialization {
@@ -31,7 +34,12 @@ internal object WebViewSerialization {
         return mapOf(
             KEY_GEOTAG_DATA to JSONObject(dataJsonString).toMap(),
             KEY_GEOTAG_EXPECTED_LOCATION to expectedLocationString?.let {
-                JSONObject(it).toMap()
+                JSONObject(it).toMap().let { location ->
+                    mapOf(
+                        KEY_TYPE to TYPE_LOCATION,
+                        KEY_VALUE to location
+                    )
+                }
             }
         )
     }
@@ -42,6 +50,24 @@ internal object WebViewSerialization {
         return mapOf(
             KEY_TYPE to "isTracking",
             KEY_VALUE to isTracking
+        )
+    }
+
+    fun serializeMetadataToInternalFormat(
+        metadata: Map<String, Any?>
+    ): Serialized {
+        return mapOf(
+            KEY_TYPE to TYPE_METADATA,
+            KEY_VALUE to metadata
+        )
+    }
+
+    fun serializeNameToInternalFormat(
+        name: String
+    ): Serialized {
+        return mapOf(
+            KEY_TYPE to TYPE_NAME,
+            KEY_VALUE to name
         )
     }
 
@@ -132,7 +158,7 @@ internal object WebViewSerialization {
                 val locationInternal =
                     (locationWithDeviationInternal[KEY_VALUE] as Serialized)[KEY_LOCATION] as Serialized
                 val deviation =
-                    (locationWithDeviationInternal[KEY_VALUE] as Serialized)[KEY_DEVIATION] as Double
+                    (locationWithDeviationInternal[KEY_VALUE] as Serialized)[KEY_DEVIATION] as Float
 
                 mapOf(
                     KEY_TYPE to TYPE_SUCCESS,
@@ -249,6 +275,7 @@ internal fun Map<String, Any?>.toJSONObject(): JSONObject {
         when (value) {
             is Map<*, *> -> jsonObject.put(key, (value as Map<String, Any?>).toJSONObject())
             is List<*> -> jsonObject.put(key, (value as List<Any?>).toJSONArray())
+            is Unit -> Unit
             else -> jsonObject.put(key, value)
         }
     }
