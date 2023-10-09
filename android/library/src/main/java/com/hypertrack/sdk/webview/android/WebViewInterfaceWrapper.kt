@@ -50,40 +50,6 @@ object WebViewInterfaceWrapper {
             .toJsResponse()
     }
 
-    fun askForLocationPermission(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity.requestPermissions(
-                listOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ).toTypedArray(),
-                REQUEST_CODE
-            )
-        }
-    }
-
-    fun askForBackgroundLocationPermission(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            activity.requestPermissions(
-                listOf(
-                    android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ).toTypedArray(),
-                REQUEST_CODE
-            )
-        }
-    }
-
-    fun askForNotificationPermission(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity.requestPermissions(
-                listOf(
-                    android.Manifest.permission.ACCESS_NOTIFICATION_POLICY
-                ).toTypedArray(),
-                REQUEST_CODE
-            )
-        }
-    }
-
     fun getDeviceId(): String? {
         return HyperTrackSdkWrapper
             .getDeviceId()
@@ -126,6 +92,40 @@ object WebViewInterfaceWrapper {
                 android.net.Uri.parse("package:${activity.packageName}")
             )
         )
+    }
+
+    fun requestLocationPermission(activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity.requestPermissions(
+                listOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                ).toTypedArray(),
+                REQUEST_CODE
+            )
+        }
+    }
+
+    fun requestBackgroundLocationPermission(activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activity.requestPermissions(
+                listOf(
+                    android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                ).toTypedArray(),
+                REQUEST_CODE
+            )
+        }
+    }
+
+    fun requestNotificationPermission(activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            activity.requestPermissions(
+                listOf(
+                    android.Manifest.permission.ACCESS_NOTIFICATION_POLICY
+                ).toTypedArray(),
+                REQUEST_CODE
+            )
+        }
     }
 
     fun setIsTracking(isTracking: Boolean) {
