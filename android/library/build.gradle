@@ -74,5 +74,4 @@ dependencies {
     implementation "com.hypertrack:push-service-firebase:${version_hypertrack_sdk}"
 
     testImplementation "junit:junit:$version_junit"
-
 }

@@ -1,0 +1,2 @@
+just release-to-s3
+    ./gradlew releaseToS3
