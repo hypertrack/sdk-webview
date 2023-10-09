@@ -28,21 +28,6 @@ public class HyperTrackWebViewJsApi {
     }
 
     @JavascriptInterface
-    public void askForLocationPermission() {
-        WebViewInterfaceWrapper.INSTANCE.askForLocationPermission(activity);
-    }
-
-    @JavascriptInterface
-    public void askForBackgroundLocationPermission() {
-        WebViewInterfaceWrapper.INSTANCE.askForBackgroundLocationPermission(activity);
-    }
-
-    @JavascriptInterface
-    public void askForNotificationsPermission() {
-        WebViewInterfaceWrapper.INSTANCE.askForNotificationPermission(activity);
-    }
-
-    @JavascriptInterface
     public String getDeviceId() {
         return WebViewInterfaceWrapper.INSTANCE.getDeviceId();
     }
@@ -60,6 +45,21 @@ public class HyperTrackWebViewJsApi {
     @JavascriptInterface
     public void openAppSettings() {
         WebViewInterfaceWrapper.INSTANCE.openAppSettings(activity);
+    }
+
+    @JavascriptInterface
+    public void requestLocationPermission() {
+        WebViewInterfaceWrapper.INSTANCE.requestLocationPermission(activity);
+    }
+
+    @JavascriptInterface
+    public void requestBackgroundLocationPermission() {
+        WebViewInterfaceWrapper.INSTANCE.requestBackgroundLocationPermission(activity);
+    }
+
+    @JavascriptInterface
+    public void requestNotificationsPermission() {
+        WebViewInterfaceWrapper.INSTANCE.requestNotificationPermission(activity);
     }
 
     @JavascriptInterface
