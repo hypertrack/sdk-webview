@@ -15,6 +15,19 @@ public class HyperTrackWebViewJsApi {
     public static final String API_NAME = "HyperTrack";
 
     @JavascriptInterface
+    public String addGeotag(String dataJsonString) {
+        return WebViewInterfaceWrapper.INSTANCE.addGeotag(dataJsonString);
+    }
+
+    @JavascriptInterface
+    public String addGeotagWithExpectedLocation(String dataJsonString, String expectedLocationJsonString) {
+        return WebViewInterfaceWrapper.INSTANCE.addGeotagWithExpectedLocation(
+                dataJsonString,
+                expectedLocationJsonString
+        );
+    }
+
+    @JavascriptInterface
     public void askForLocationPermission() {
         WebViewInterfaceWrapper.INSTANCE.askForLocationPermission(activity);
     }
@@ -27,19 +40,6 @@ public class HyperTrackWebViewJsApi {
     @JavascriptInterface
     public void askForNotificationsPermission() {
         WebViewInterfaceWrapper.INSTANCE.askForNotificationPermission(activity);
-    }
-
-    @JavascriptInterface
-    public String addGeotag(String dataJsonString) {
-        return WebViewInterfaceWrapper.INSTANCE.addGeotag(dataJsonString);
-    }
-
-    @JavascriptInterface
-    public String addGeotagWithExpectedLocation(String dataJsonString, String expectedLocationJsonString) {
-        return WebViewInterfaceWrapper.INSTANCE.addGeotagWithExpectedLocation(
-                dataJsonString,
-                expectedLocationJsonString
-        );
     }
 
     @JavascriptInterface

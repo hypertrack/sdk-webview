@@ -30,18 +30,22 @@ internal object WebViewSerialization {
     fun serializeGeotagDataToInternalFormat(
         dataJsonString: String,
         expectedLocationString: String?
-    ): Serialized {
-        return mapOf(
-            KEY_GEOTAG_DATA to JSONObject(dataJsonString).toMap(),
-            KEY_GEOTAG_EXPECTED_LOCATION to expectedLocationString?.let {
-                JSONObject(it).toMap().let { location ->
-                    mapOf(
-                        KEY_TYPE to TYPE_LOCATION,
-                        KEY_VALUE to location
-                    )
+    ): WrapperResult<Serialized> {
+        return WrapperResult.tryAsResult {
+            JSONObject(dataJsonString)
+        }.mapSuccess {
+            mapOf(
+                KEY_GEOTAG_DATA to it.toMap(),
+                KEY_GEOTAG_EXPECTED_LOCATION to expectedLocationString?.let {
+                    JSONObject(it).toMap().let { location ->
+                        mapOf(
+                            KEY_TYPE to TYPE_LOCATION,
+                            KEY_VALUE to location
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     fun serializeIsTrackingToInternalFormat(
@@ -54,12 +58,16 @@ internal object WebViewSerialization {
     }
 
     fun serializeMetadataToInternalFormat(
-        metadata: Map<String, Any?>
-    ): Serialized {
-        return mapOf(
-            KEY_TYPE to TYPE_METADATA,
-            KEY_VALUE to metadata
-        )
+        metadataString: String
+    ): WrapperResult<Serialized> {
+        return WrapperResult.tryAsResult {
+            JSONObject(metadataString)
+        }.mapSuccess {
+            mapOf(
+                KEY_TYPE to TYPE_METADATA,
+                KEY_VALUE to it.toMap()
+            )
+        }
     }
 
     fun serializeNameToInternalFormat(

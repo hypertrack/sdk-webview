@@ -26,11 +26,12 @@ object WebViewInterfaceWrapper {
     private const val REQUEST_CODE = 55658769
 
     fun addGeotag(dataJsonString: String): String {
-        return HyperTrackSdkWrapper.addGeotag(
-            serializeGeotagDataToInternalFormat(dataJsonString, null)
-        )
+        return serializeGeotagDataToInternalFormat(dataJsonString, null)
             .flatMapSuccess {
-                deserializeLocationResponseFromInternalFormat(it)
+                HyperTrackSdkWrapper.addGeotag(it)
+            }
+            .flatMapSuccess {
+                deserializeLocationWithDeviationResponseFromInternalFormat(it)
             }
             .toJsResponse()
     }
@@ -39,10 +40,10 @@ object WebViewInterfaceWrapper {
         dataJsonString: String,
         expectedLocationJsonString: String
     ): String {
-        return HyperTrackSdkWrapper
-            .addGeotag(
-                serializeGeotagDataToInternalFormat(dataJsonString, expectedLocationJsonString)
-            )
+        return serializeGeotagDataToInternalFormat(dataJsonString, expectedLocationJsonString)
+            .flatMapSuccess {
+                HyperTrackSdkWrapper.addGeotag(it)
+            }
             .flatMapSuccess {
                 deserializeLocationWithDeviationResponseFromInternalFormat(it)
             }
@@ -136,11 +137,9 @@ object WebViewInterfaceWrapper {
     }
 
     fun setMetadata(metadataString: String): String {
-        return WrapperResult.tryAsResult {
-            JSONObject(metadataString).toMap()
-        }
-            .flatMapSuccess {
-                HyperTrackSdkWrapper.setMetadata(serializeMetadataToInternalFormat(it))
+        return serializeMetadataToInternalFormat(metadataString)
+            .mapSuccess {
+                HyperTrackSdkWrapper.setMetadata(it)
             }
             .toJsResponse()
     }
