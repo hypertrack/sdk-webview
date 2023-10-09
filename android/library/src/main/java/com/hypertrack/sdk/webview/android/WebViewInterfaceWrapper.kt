@@ -2,6 +2,7 @@ package com.hypertrack.sdk.webview.android
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeDeviceIdFromInternalFormat
@@ -115,6 +116,15 @@ object WebViewInterfaceWrapper {
             .mapSuccess { it as Serialized? }
             .swallowFailureAndLogError("getLocation", null)
             ?.toJsResponse()
+    }
+
+    fun openAppSettings(activity: Activity) {
+        activity.startActivity(
+            Intent(
+                android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                android.net.Uri.parse("package:${activity.packageName}")
+            )
+        )
     }
 
     fun setIsTracking(isTracking: Boolean) {

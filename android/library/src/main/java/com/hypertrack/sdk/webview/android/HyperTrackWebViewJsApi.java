@@ -58,6 +58,11 @@ public class HyperTrackWebViewJsApi {
     }
 
     @JavascriptInterface
+    public void openAppSettings() {
+        WebViewInterfaceWrapper.INSTANCE.openAppSettings(activity);
+    }
+
+    @JavascriptInterface
     public void setIsTracking(boolean isTracking) {
         WebViewInterfaceWrapper.INSTANCE.setIsTracking(isTracking);
     }

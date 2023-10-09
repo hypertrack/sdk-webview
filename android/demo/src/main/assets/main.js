@@ -126,3 +126,11 @@ function askForNotificationsPermission() {
         alert(e);
     }
 }
+
+function openAppSettings() {
+    try {
+        HyperTrack.openAppSettings();
+    } catch (e) {
+        alert(e);
+    }
+}
