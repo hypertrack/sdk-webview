@@ -2,23 +2,7 @@
 
 ## HyperTrack object
 
-### getDeviceId()
-
-Returns the device ID.
-
-```javascript
-HyperTrack.getDeviceId()
-```
-
-### setIsTracking(isTracking: Boolean)
-
-Starts or stops tracking.
-
-```javascript
-HyperTrack.setIsTracking(true)
-```
-
-### addGeotag
+### addGeotag()
 
 Adds a geotag.
 
@@ -36,16 +20,41 @@ HyperTrack.addGeotag(
 
 #### Parameters
 
-| Name | Type        | Description |
-| --- |-------------|-------------|
+| Name       | Type        | Description |
+|------------|-------------|-------------|
 | geotagData | JSON String | Geotag data |
 
 #### Returns
 
-JSON String of result object
-Result<Result<Location, LocationError>, JsError>
 
-### addGeotagWithExpectedLocation
+JSON String of result object:
+[Result](#resultsuccess-failure)<[Result](#resultsuccess-failure)<[Location](#location), [LocationError](#locationerror)>, [JsError](#jserror)>
+
+Example responses:
+
+```JSON
+{
+  "type": "success",
+  "value": {
+    "type": "success",
+    "value": {
+      "latitude": 37.33182,
+      "longitude": -122.03118
+    }
+  }
+}
+```
+
+```JSON
+{
+  "type": "failure",
+  "value": {
+    "error": "<invalid geotagData value error>"
+  }
+}
+```
+
+### addGeotagWithExpectedLocation()
 
 Adds a geotag with expected location.
 
@@ -69,27 +78,52 @@ HyperTrack.addGeotagWithExpectedLocation(
 
 #### Parameters
 
-| Name | Type        | Description              |
-| --- |-------------|--------------------------|
-| geotagData | JSON String | Geotag data              |
-| expectedLocation | JSON String | Expected location object |
+| Name             | Type        | Description                              |
+|------------------|-------------|------------------------------------------|
+| geotagData       | JSON String | Geotag data                              |
+| expectedLocation | JSON String | Expected location as [Location](#location-1) object |
 
-Expected location object:
-```
-{
-  "latitude": Number,
-  "longitude": Number,
-}
+#### Returns
+
+JSON String of result object:
+[Result](#resultsuccess-failure)<[Result](#resultsuccess-failure)<[LocationWithDeviation](#locationwithdeviation), [LocationError](#locationerror)>, [JsError](#jserror)>
+
+### askForLocationPermission()
+
+Asks for location permission (`ACCESS_FINE_LOCATION`).
+
+### askForBackgroundLocationPermission()
+
+Asks for background location permission (`ACCESS_BACKGROUND_LOCATION`).
+
+### askForNotificationsPermission()
+
+Asks for notifications permission (`POST_NOTIFICATIONS`).
+
+### getDeviceId()
+
+Returns the device ID.
+
+```javascript
+HyperTrack.getDeviceId()
 ```
 
 #### Returns
 
-JSON String of result object
-Result<Result<LocationWithDeviation, LocationError>, JsError>
+Device ID String
+
+### setIsTracking(isTracking: Boolean)
+
+Starts or stops tracking.
+
+```javascript
+HyperTrack.setIsTracking(true)
+```
 
 ## Data types
 
 ### Result<Success, Failure>
+
 ```
 {
   "type": "success",
@@ -103,6 +137,7 @@ Result<Result<LocationWithDeviation, LocationError>, JsError>
 ```
 
 ### Location
+
 ```
 {
   "latitude": Double,
@@ -113,6 +148,7 @@ Result<Result<LocationWithDeviation, LocationError>, JsError>
 ### LocationError
 
 Tracking is not started (adding geotags is not possible)
+
 ```
 {
   "type": "notRunning
@@ -120,6 +156,7 @@ Tracking is not started (adding geotags is not possible)
 ```
 
 SDK is not initialized yet (no location data to add geotag)
+
 ```
 {
     "type": "starting
@@ -127,6 +164,7 @@ SDK is not initialized yet (no location data to add geotag)
 ```
 
 There was an outage while getting the location data
+
 ```
 {
     "type": "hyperTrackError",
@@ -137,92 +175,80 @@ There was an outage while getting the location data
 ### HyperTrackError
 
 ```javascript
-enum HyperTrackError {
-    /**
-    * GPS satellites are not in view.
-    */
-    gpsSignalLost = 'gpsSignalLost',
-    
-    /**
-    * The user enabled mock location app while mocking locations is prohibited.
-    */
-    locationMocked = 'locationMocked',
-    
-    /**
-    * The user denied location permissions.
-    */
-    locationPermissionsDenied = 'locationPermissionsDenied',
-    
-    /**
-    * Can’t start tracking in background with When In Use location permissions.
-    * SDK will automatically start tracking when app will return to foreground.
-    */
-    locationPermissionsInsufficientForBackground = 'locationPermissionsInsufficientForBackground',
-    
-    /**
-    * [iOS only] The user has not chosen whether the app can use location services.
-    */
-    locationPermissionsNotDetermined = 'locationPermissionsNotDetermined',
-    
-    /**
-    * The user didn’t grant precise location permissions or downgraded permissions to imprecise.
-    */
-    locationPermissionsReducedAccuracy = 'locationPermissionsReducedAccuracy',
-    
-    /**
-    * [iOS only] The app is in Provisional Always authorization state, which stops sending locations when app is in background.
-    */
-    locationPermissionsProvisional = 'locationPermissionsProvisional',
-    
-    /**
-    * [iOS only] The app is not authorized to use location services.
-    */
-    locationPermissionsRestricted = 'locationPermissionsRestricted',
-    
-    /**
-    * The user disabled location services systemwide.
-    */
-    locationServicesDisabled = 'locationServicesDisabled',
-    
-    /**
-    * [Android only] The device doesn't have location services.
-    */
-    locationServicesUnavailable = 'locationServicesUnavailable',
-    
-    /**
-    * [iOS only] The user has not chosen whether the app can use motion activity services.
-    */
-    motionActivityPermissionsNotDetermined = 'motionActivityPermissionsNotDetermined',
-    
-    /**
-    * The user denied motion activity permissions.
-    */
-    motionActivityPermissionsDenied = 'motionActivityPermissionsDenied',
-    
-    /**
-    * [iOS only] The user has restricted motion activity services.
-    */
-    motionActivityServicesDisabled = 'motionActivityServicesDisabled',
-    
-    /**
-    * [iOS only] The device doesn't have motion activity services.
-    */
-    motionActivityServicesUnavailable = 'motionActivityServicesUnavailable',
-    
-    /**
-    * [iOS only] The app is not authorized to use motion activity services.
-    */
-    motionActivityPermissionsRestricted = 'motionActivityPermissionsRestricted',
-    
-    /**
-    *  [Android only] The user denied notification permissions needed to display persistent notification needed for foreground location tracking.
-    */
-    invalidPublishableKey = 'invalidPublishableKey',
-    
-    /**
-    * The SDK is not collecting locations because it’s neither tracking nor available.
-    */
-    blockedFromRunning = 'blockedFromRunning',
+export enum HyperTrackError {
+  /**
+   * The SDK was remotely blocked from running.
+   */
+  blockedFromRunning = 'blockedFromRunning',
+
+  /**
+   * The publishable key is invalid.
+   */
+  invalidPublishableKey = 'invalidPublishableKey',
+
+  /**
+   * The user enabled mock location app while mocking locations is prohibited.
+   */
+  locationMocked = 'location.mocked',
+
+  /**
+   * The user disabled location services systemwide.
+   */
+  locationServicesDisabled = 'location.servicesDisabled',
+
+  /**
+   * [Android only] The device doesn't have location services.
+   */
+  locationServicesUnavailable = 'location.servicesUnavailable',
+
+  /**
+   * GPS satellites are not in view.
+   */
+  locationSignalLost = 'location.signalLost',
+
+  /**
+   * [Android only] The SDK wasn't able to start tracking because of the limitations imposed by the OS.
+   * The exempt from background execution conditions weren't met.
+   * {@link https://developer.android.com/guide/components/foreground-services#background-start-restriction-exemptions}
+   */
+  noExemptionFromBackgroundStartRestrictions = 'noExemptionFromBackgroundStartRestrictions',
+
+  /**
+   * The user denied location permissions.
+   */
+  permissionsLocationDenied = 'permissions.location.denied',
+
+  /**
+   * Can’t start tracking in background with When In Use location permissions.
+   * SDK will automatically start tracking when app will return to foreground.
+   */
+  permissionsLocationInsufficientForBackground = 'permissions.location.insufficientForBackground',
+
+  /**
+   * [iOS only] The user has not chosen whether the app can use location services.
+   */
+  permissionsLocationNotDetermined = 'permissions.location.notDetermined',
+
+  /**
+   * [iOS only] The app is in Provisional Always authorization state, which stops sending locations when app is in background.
+   */
+  permissionsLocationProvisional = 'permissions.location.provisional',
+
+  /**
+   * The user didn't grant precise location permissions or downgraded permissions to imprecise.
+   */
+  permissionsLocationReducedAccuracy = 'permissions.location.reducedAccuracy',
+
+  /**
+   * [iOS only] The app is not authorized to use location services.
+   */
+  permissionsLocationRestricted = 'permissions.location.restricted',
+
+  /**
+   * [Android only] The user denied notification permissions needed to display a persistent notification
+   * needed for foreground location tracking.
+   */
+  permissionsNotificationsDenied = 'permissions.notifications.denied',
 }
 ```
 
