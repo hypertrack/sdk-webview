@@ -112,7 +112,7 @@ class WebViewSerializationTest {
                             "longitude" to 2.0,
                         )
                     ),
-                    "deviation" to 3.0
+                    "deviation" to 3f
                 )
             )
         )
@@ -123,7 +123,7 @@ class WebViewSerializationTest {
                     "latitude" to 1.0,
                     "longitude" to 2.0,
                 ),
-                "deviation" to 3.0
+                "deviation" to 3f
             )
         )
         val value = WebViewSerialization.deserializeLocationWithDeviationResponseFromInternalFormat(
