@@ -1,10 +1,33 @@
 package com.hypertrack.sdk.webview.android;
 
+import android.app.Activity;
+import android.content.Context;
 import android.webkit.JavascriptInterface;
 
 public class HyperTrackWebViewJsApi {
 
+    private final Activity activity;
+
+    public HyperTrackWebViewJsApi(Activity activity) {
+        this.activity = activity;
+    }
+
     public static final String API_NAME = "HyperTrack";
+
+    @JavascriptInterface
+    public void askForLocationPermission() {
+        WebViewInterfaceWrapper.INSTANCE.askForLocationPermission(activity);
+    }
+
+    @JavascriptInterface
+    public void askForBackgroundLocationPermission() {
+        WebViewInterfaceWrapper.INSTANCE.askForBackgroundLocationPermission(activity);
+    }
+
+    @JavascriptInterface
+    public void askForNotificationsPermission() {
+        WebViewInterfaceWrapper.INSTANCE.askForNotificationPermission(activity);
+    }
 
     @JavascriptInterface
     public String addGeotag(String dataJsonString) {

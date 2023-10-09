@@ -103,9 +103,25 @@ function setName() {
      }
 }
 
-function askForPermissions() {
+function askForLocationPermission() {
     try {
-        HyperTrack.requestPermissionsIfNecessary();
+        HyperTrack.askForLocationPermission();
+    } catch (e) {
+        alert(e);
+    }
+}
+
+function askForBackgroundLocationPermission() {
+    try {
+        HyperTrack.askForBackgroundLocationPermission();
+    } catch (e) {
+        alert(e);
+    }
+}
+
+function askForNotificationsPermission() {
+    try {
+        HyperTrack.askForNotificationsPermission();
     } catch (e) {
         alert(e);
     }

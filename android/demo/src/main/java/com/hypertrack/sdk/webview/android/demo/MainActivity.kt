@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             settings.javaScriptCanOpenWindowsAutomatically = true
             webChromeClient = WebChromeClient()
             addJavascriptInterface(
-                HyperTrackWebViewJsApi(), HyperTrackWebViewJsApi.API_NAME
+                HyperTrackWebViewJsApi(this@MainActivity), HyperTrackWebViewJsApi.API_NAME
             )
         }
 
