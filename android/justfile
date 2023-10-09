@@ -1,0 +1,5 @@
+release:
+    echo "Success"
+
+release-to-maven:
+    ./gradlew releaseToS3

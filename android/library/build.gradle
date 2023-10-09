@@ -1,0 +1,77 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+    id 'org.jetbrains.kotlin.android'
+}
+
+apply from: "$project.rootDir/scripts/git-version.gradle"
+
+def mavenArtifactId = 'sdk-webview'
+
+android {
+    namespace 'com.hypertrack.sdk.webview.android'
+    compileSdk version_compile_sdk.toInteger()
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    defaultConfig {
+        minSdk version_min_sdk.toInteger()
+        targetSdk version_target_sdk.toInteger()
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+}
+
+def homePath = System.properties['user.home']
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+
+                groupId = 'com.hypertrack'
+                artifactId = mavenArtifactId
+                version = gitVersionName
+            }
+        }
+    }
+    releaseToS3.dependsOn(publishReleasePublicationToMavenLocal)
+}
+
+task releaseToS3 {
+    doLast {
+        exec {
+            commandLine 'aws', 's3', 'cp', '--recursive',
+                    homePath + "/.m2/repository/com/hypertrack/$mavenArtifactId/$gitVersionName/",
+                    "s3://m2.hypertrack.com/com/hypertrack/$mavenArtifactId/$gitVersionName/"
+        }
+    }
+}
+
+dependencies {
+    implementation "com.hypertrack:sdk-android:${version_hypertrack_sdk}"
+    implementation "com.hypertrack:location-services-google:${version_hypertrack_sdk}"
+    implementation "com.hypertrack:push-service-firebase:${version_hypertrack_sdk}"
+
+    testImplementation "junit:junit:$version_junit"
+}
