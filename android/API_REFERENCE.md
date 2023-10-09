@@ -120,57 +120,59 @@ Starts or stops tracking.
 HyperTrack.setIsTracking(true)
 ```
 
-## Data types
+### setMetadata(metadataObjectString: JSON String)
 
-### Result<Success, Failure>
+Sets metadata.
 
-```
+```javascript
+HyperTrack.setMetadata(
+    JSON.stringify(
+        {
+            "test_object": {
+                "test_key1": "test_value1"
+            }
+        }
+    )
+);
+``` 
+
+#### Parameters
+
+| Name              | Type        | Description |
+|-------------------|-------------|-------------|
+| metadataObjectString | JSON String | Metadata object |
+
+#### Returns
+
+JSON String of result object:
+[Result](#resultsuccess-failure)<`Void`>
+
+Example responses:
+
+```JSON
 {
   "type": "success",
-  "value": Success
 }
+```
 
+```JSON
 {
   "type": "failure",
-  "value": Failure
+  "value": {
+    "error": "<invalid metadataObjectString value error>"
+  }
 }
 ```
 
-### Location
+### setName(name: String)
 
-```
-{
-  "latitude": Double,
-  "longitude": Double,
-}
-```
+Sets name.
 
-### LocationError
-
-Tracking is not started (adding geotags is not possible)
-
-```
-{
-  "type": "notRunning
-}
+```javascript
+HyperTrack.setName("John Doe")
 ```
 
-SDK is not initialized yet (no location data to add geotag)
-
-```
-{
-    "type": "starting
-}
-```
-
-There was an outage while getting the location data
-
-```
-{
-    "type": "hyperTrackError",
-    "value": HyperTrackError
-}
-```
+## Data types
 
 ### HyperTrackError
 
@@ -252,12 +254,56 @@ export enum HyperTrackError {
 }
 ```
 
+### JsError
+
+```javascript
+{
+    "error": String,
+}
+```
+
 ### Location
 
 ```javascript
 {
     "latitude": Double,
     "longitude": Double,
+}
+```
+
+### Location
+
+```
+{
+  "latitude": Double,
+  "longitude": Double,
+}
+```
+
+### LocationError
+
+- Tracking is not started (adding geotags is not possible)
+
+```
+{
+  "type": "notRunning
+}
+```
+
+- SDK is not initialized yet (no location data to add geotag)
+
+```
+{
+    "type": "starting
+}
+```
+
+- There was an outage while getting the location data
+
+```
+{
+    "type": "hyperTrackError",
+    "value": HyperTrackError
 }
 ```
 
@@ -270,10 +316,18 @@ export enum HyperTrackError {
 }
 ```
 
-### JsError
-
-```javascript
-{
-    "error": String,
-}
-```
+### Result<Success, Failure>
+  
+  ```javascript
+  {
+      "type": "success",
+      "value": Success,
+  }
+  ```
+  
+  ```javascript
+  {
+      "type": "failure",
+      "value": Failure,
+  }
+  ```
