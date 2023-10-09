@@ -55,14 +55,12 @@ import org.ajoberstar.grgit.Grgit
 ext {
     git = Grgit.open(currentDir: projectDir)
 
-    def androidCorePrefix = "android/sdk/"
-
     def alphaPrePremierePostfix = "alpha"
     def betaPrePremierePostfix = "beta"
     def releaseCandidatePrePremierePostfix = "rc"
     def prePremierePostfixes = "-($alphaPrePremierePostfix|$betaPrePremierePostfix|$releaseCandidatePrePremierePostfix)"
 
-    def tagPattern = ~("^$androidCorePrefix[0-9]+\\.[0-9]+\\.[0-9]+($prePremierePostfixes(\\.[0-9]+))*\$")
+    def tagPattern = ~("^[0-9]+\\.[0-9]+\\.[0-9]+($prePremierePostfixes(\\.[0-9]+))*\$")
 
     def head = git.head()
     def headTag = git.tag.list().find { tag ->
@@ -74,11 +72,11 @@ ext {
     if (gitVersionName == null) {
         gitVersionName = "0.0.0"
     } else {
-        gitVersionName = gitVersionName.replace(androidCorePrefix, "")
+        gitVersionName = gitVersionName
     }
 
     if (headTag) {
-        gitVersionName = headTag.getName().replace(androidCorePrefix, "")
+        gitVersionName = headTag.getName()
 
         def majorMinorPatchMatch = (gitVersionName =~ /(\d+)\.(\d+)\.(\d+)/)
         def stageRevisionMatch = (gitVersionName =~ ~("$prePremierePostfixes\\.(\\d+)"))
@@ -93,9 +91,11 @@ ext {
                 if (versionRevisionType == alphaPrePremierePostfix) {
                     versionPatch -= (100 - versionRevision)
                 } else if (versionRevisionType == betaPrePremierePostfix) {
-                    versionPatch -= (100 - 33 - versionRevision)      // - (100 + 33) (highest alpha)
+                    versionPatch -= (100 - 33 - versionRevision)
+                    // - (100 + 33) (highest alpha)
                 } else if (versionRevisionType == releaseCandidatePrePremierePostfix) {
-                    versionPatch -= (100 - 33 - 33 - versionRevision) // - (100 + 33 (highest alpha) + 33 (highest beta))
+                    versionPatch -= (100 - 33 - 33 - versionRevision)
+                    // - (100 + 33 (highest alpha) + 33 (highest beta))
                 }
             }
             gitVersionCode = 100000000 * versionMajor + 100000 * versionMinor + versionPatch
