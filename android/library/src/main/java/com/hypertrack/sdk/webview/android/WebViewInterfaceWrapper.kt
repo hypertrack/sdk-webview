@@ -31,7 +31,7 @@ object WebViewInterfaceWrapper {
                 HyperTrackSdkWrapper.addGeotag(it)
             }
             .flatMapSuccess {
-                deserializeLocationWithDeviationResponseFromInternalFormat(it)
+                deserializeLocationResponseFromInternalFormat(it)
             }
             .toJsResponse()
     }
@@ -138,7 +138,7 @@ object WebViewInterfaceWrapper {
 
     fun setMetadata(metadataString: String): String {
         return serializeMetadataToInternalFormat(metadataString)
-            .mapSuccess {
+            .flatMapSuccess {
                 HyperTrackSdkWrapper.setMetadata(it)
             }
             .toJsResponse()

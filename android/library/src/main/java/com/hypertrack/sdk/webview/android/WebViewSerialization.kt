@@ -32,10 +32,8 @@ internal object WebViewSerialization {
         expectedLocationString: String?
     ): WrapperResult<Serialized> {
         return WrapperResult.tryAsResult {
-            JSONObject(dataJsonString)
-        }.mapSuccess {
             mapOf(
-                KEY_GEOTAG_DATA to it.toMap(),
+                KEY_GEOTAG_DATA to JSONObject(dataJsonString).toMap(),
                 KEY_GEOTAG_EXPECTED_LOCATION to expectedLocationString?.let {
                     JSONObject(it).toMap().let { location ->
                         mapOf(
@@ -161,31 +159,35 @@ internal object WebViewSerialization {
     ): WrapperResult<Serialized> {
         return when {
             locationWithDeviationResponse[KEY_TYPE] == TYPE_SUCCESS -> {
-                val locationWithDeviationInternal =
-                    locationWithDeviationResponse[KEY_VALUE] as Serialized
-                val locationInternal =
-                    (locationWithDeviationInternal[KEY_VALUE] as Serialized)[KEY_LOCATION] as Serialized
-                val deviation =
-                    (locationWithDeviationInternal[KEY_VALUE] as Serialized)[KEY_DEVIATION] as Float
+                WrapperResult.tryAsResult {
+                    val locationWithDeviationInternal =
+                        locationWithDeviationResponse[KEY_VALUE] as Serialized
+                    val locationInternal =
+                        (locationWithDeviationInternal[KEY_VALUE] as Serialized)[KEY_LOCATION] as Serialized
+                    val deviation =
+                        (locationWithDeviationInternal[KEY_VALUE] as Serialized)[KEY_DEVIATION] as Float
 
-                mapOf(
-                    KEY_TYPE to TYPE_SUCCESS,
-                    KEY_VALUE to mapOf(
-                        KEY_LOCATION to locationInternal[KEY_VALUE],
-                        KEY_DEVIATION to deviation
+                    mapOf<String, Any?>(
+                        KEY_TYPE to TYPE_SUCCESS,
+                        KEY_VALUE to mapOf(
+                            KEY_LOCATION to locationInternal[KEY_VALUE],
+                            KEY_DEVIATION to deviation
+                        )
                     )
-                ).let { Success(it) }
+                }
             }
 
             locationWithDeviationResponse[KEY_TYPE] == TYPE_FAILURE -> {
-                deserializeLocationErrorFromInternalFormat(
-                    locationWithDeviationResponse[KEY_VALUE] as Serialized
-                ).mapSuccess {
-                    mapOf(
-                        KEY_TYPE to TYPE_FAILURE,
-                        KEY_VALUE to it
-                    )
-                }
+                WrapperResult.tryAsResult {
+                    deserializeLocationErrorFromInternalFormat(
+                        locationWithDeviationResponse[KEY_VALUE] as Serialized
+                    ).mapSuccess {
+                        mapOf<String, Any?>(
+                            KEY_TYPE to TYPE_FAILURE,
+                            KEY_VALUE to it
+                        )
+                    }
+                }.flatMapSuccess { it }
             }
 
             else -> {
