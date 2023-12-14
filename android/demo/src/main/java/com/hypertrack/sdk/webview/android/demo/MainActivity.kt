@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             settings.javaScriptCanOpenWindowsAutomatically = true
             webChromeClient = object : WebChromeClient() {
 //                override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
-//                    Log.e("CONSOLE", consoleMessage?.message() ?: "no data");
+//                    Log.e("HT-DEBUG", consoleMessage?.message() ?: "no data");
 //                    return true
 //                }
             }

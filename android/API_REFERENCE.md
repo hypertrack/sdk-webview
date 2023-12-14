@@ -8,24 +8,21 @@ Adds a geotag.
 
 ```javascript
 HyperTrack.addGeotag(
-    JSON.stringify(
-        {
-            "test_object": {
-                "test_key1": "test_value1"
-            }
-        }
-    )
+  JSON.stringify({
+    test_object: {
+      test_key1: "test_value1",
+    },
+  })
 );
 ```
 
 #### Parameters
 
 | Name       | Type        | Description |
-|------------|-------------|-------------|
+| ---------- | ----------- | ----------- |
 | geotagData | JSON String | Geotag data |
 
 #### Returns
-
 
 JSON String of result object:
 [Result](#resultsuccess-failure)<[Result](#resultsuccess-failure)<[Location](#location), [LocationError](#locationerror)>, [JsError](#jserror)>
@@ -60,27 +57,23 @@ Adds a geotag with expected location.
 
 ```javascript
 HyperTrack.addGeotagWithExpectedLocation(
-    JSON.stringify(
-        {
-            "test_object": {
-                "test_key1": "test_value1"
-            }
-        }
-    ),
-    JSON.stringify(
-        {
-            "latitude": 37.33182,
-            "longitude": -122.03118
-        }
-    )
+  JSON.stringify({
+    test_object: {
+      test_key1: "test_value1",
+    },
+  }),
+  JSON.stringify({
+    latitude: 37.33182,
+    longitude: -122.03118,
+  })
 );
 ```
 
 #### Parameters
 
-| Name             | Type        | Description                              |
-|------------------|-------------|------------------------------------------|
-| geotagData       | JSON String | Geotag data                              |
+| Name             | Type        | Description                                         |
+| ---------------- | ----------- | --------------------------------------------------- |
+| geotagData       | JSON String | Geotag data                                         |
 | expectedLocation | JSON String | Expected location as [Location](#location-1) object |
 
 #### Returns
@@ -105,7 +98,7 @@ Asks for notifications permission (`POST_NOTIFICATIONS`).
 Returns the device ID.
 
 ```javascript
-HyperTrack.getDeviceId()
+HyperTrack.getDeviceId();
 ```
 
 #### Returns
@@ -117,7 +110,7 @@ Device ID String
 Starts or stops tracking.
 
 ```javascript
-HyperTrack.setIsTracking(true)
+HyperTrack.setIsTracking(true);
 ```
 
 ### setMetadata(metadataObjectString: JSON String)
@@ -126,20 +119,18 @@ Sets metadata.
 
 ```javascript
 HyperTrack.setMetadata(
-    JSON.stringify(
-        {
-            "test_object": {
-                "test_key1": "test_value1"
-            }
-        }
-    )
+  JSON.stringify({
+    test_object: {
+      test_key1: "test_value1",
+    },
+  })
 );
-``` 
+```
 
 #### Parameters
 
-| Name              | Type        | Description |
-|-------------------|-------------|-------------|
+| Name                 | Type        | Description     |
+| -------------------- | ----------- | --------------- |
 | metadataObjectString | JSON String | Metadata object |
 
 #### Returns
@@ -169,7 +160,7 @@ Example responses:
 Sets name.
 
 ```javascript
-HyperTrack.setName("John Doe")
+HyperTrack.setName("John Doe");
 ```
 
 ## Data types
@@ -177,7 +168,7 @@ HyperTrack.setName("John Doe")
 ### HyperTrackError
 
 ```javascript
-export enum HyperTrackError {
+enum HyperTrackError {
   /**
    * The SDK was remotely blocked from running.
    */
@@ -317,17 +308,17 @@ export enum HyperTrackError {
 ```
 
 ### Result<Success, Failure>
-  
-  ```javascript
-  {
-      "type": "success",
-      "value": Success,
-  }
-  ```
-  
-  ```javascript
-  {
-      "type": "failure",
-      "value": Failure,
-  }
-  ```
+
+```javascript
+{
+    "type": "success",
+    "value": Success,
+}
+```
+
+```javascript
+{
+    "type": "failure",
+    "value": Failure,
+}
+```

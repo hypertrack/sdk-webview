@@ -1,5 +1,5 @@
 try {
-  let deviceId = HyperTrackWebViewInterface.getDeviceId();
+  let deviceId = HyperTrack.getDeviceId();
   document.getElementById("device-id").innerText = deviceId;
 } catch (e) {
   alert(e);
@@ -7,7 +7,7 @@ try {
 
 function startTracking() {
   try {
-    HyperTrackWebViewInterface.setIsTracking(true);
+    HyperTrack.setIsTracking(true);
   } catch (e) {
     alert(e);
   }
@@ -15,7 +15,7 @@ function startTracking() {
 
 function stopTracking() {
   try {
-    HyperTrackWebViewInterface.setIsTracking(false);
+    HyperTrack.setIsTracking(false);
   } catch (e) {
     alert(e);
   }
@@ -23,14 +23,12 @@ function stopTracking() {
 
 function addGeotag() {
   try {
-    let addGeotagResult = HyperTrackWebViewInterface.addGeotag(
-      JSON.stringify({
-        test_object: {
-          test_key1: "test_value1",
-        },
-      })
-    );
-    alert(JSON.stringify(JSON.parse(addGeotagResult), null, 2));
+    let addGeotagResult = HyperTrack.addGeotag({
+      test_object: {
+        test_key1: "test_value1",
+      },
+    });
+    alert(JSON.stringify(addGeotagResult, null, 2));
   } catch (e) {
     alert(e);
   }
@@ -39,21 +37,19 @@ function addGeotag() {
 function addGeotagWithExpectedLocation() {
   try {
     let addGeotagWithExpectedLocationResult =
-      HyperTrackWebViewInterface.addGeotagWithExpectedLocation(
-        JSON.stringify({
+      HyperTrack.addGeotagWithExpectedLocation(
+        {
           with_expected_location: "true",
           test_object: {
             test_key1: "test_value1",
           },
-        }),
-        JSON.stringify({
+        },
+        {
           latitude: 37.7758,
           longitude: -122.435,
-        })
+        }
       );
-    alert(
-      JSON.stringify(JSON.parse(addGeotagWithExpectedLocationResult), null, 2)
-    );
+    alert(JSON.stringify(addGeotagWithExpectedLocationResult, null, 2));
   } catch (e) {
     alert(e);
   }
@@ -61,8 +57,8 @@ function addGeotagWithExpectedLocation() {
 
 function getErrors() {
   try {
-    let errors = HyperTrackWebViewInterface.getErrors();
-    alert(JSON.stringify(JSON.parse(errors), null, 2));
+    let errors = HyperTrack.getErrors();
+    alert(JSON.stringify(errors, null, 2));
   } catch (e) {
     alert(e);
   }
@@ -70,8 +66,8 @@ function getErrors() {
 
 function getLocation() {
   try {
-    let location = HyperTrackWebViewInterface.getLocation();
-    alert(JSON.stringify(JSON.parse(location), null, 2));
+    let location = HyperTrack.getLocation();
+    alert(JSON.stringify(location, null, 2));
   } catch (e) {
     alert(e);
   }
@@ -79,12 +75,11 @@ function getLocation() {
 
 function setMetadata() {
   try {
-    let result = HyperTrackWebViewInterface.setMetadata(
-      JSON.stringify({
-        metadata_field: "test_metadata_value",
-      })
-    );
-    alert(JSON.stringify(JSON.parse(result), null, 2));
+    let metadata = {
+      metadata_field: "test_metadata_value",
+    };
+    HyperTrack.setMetadata();
+    alert(`Metadata set to ${JSON.stringify(metadata)}`);
   } catch (e) {
     alert(e);
   }
@@ -92,7 +87,9 @@ function setMetadata() {
 
 function setName() {
   try {
-    HyperTrackWebViewInterface.setName("test_name");
+    let name = "test_name";
+    HyperTrack.setName(name);
+    alert(`Name set to ${name}`);
   } catch (e) {
     alert(e);
   }
@@ -100,7 +97,7 @@ function setName() {
 
 function openAppSettings() {
   try {
-    HyperTrackWebViewInterface.openAppSettings();
+    HyperTrack.openAppSettings();
   } catch (e) {
     alert(e);
   }
@@ -108,7 +105,8 @@ function openAppSettings() {
 
 function requestLocationPermission() {
   try {
-    HyperTrackWebViewInterface.requestLocationPermission();
+    console.log(HyperTrack.requestLocationPermission);
+    HyperTrack.requestLocationPermission();
   } catch (e) {
     alert(e);
   }
@@ -116,7 +114,7 @@ function requestLocationPermission() {
 
 function requestBackgroundLocationPermission() {
   try {
-    HyperTrackWebViewInterface.requestBackgroundLocationPermission();
+    HyperTrack.requestBackgroundLocationPermission();
   } catch (e) {
     alert(e);
   }
@@ -124,7 +122,7 @@ function requestBackgroundLocationPermission() {
 
 function requestNotificationsPermission() {
   try {
-    HyperTrackWebViewInterface.requestNotificationsPermission();
+    HyperTrack.requestNotificationsPermission();
   } catch (e) {
     alert(e);
   }

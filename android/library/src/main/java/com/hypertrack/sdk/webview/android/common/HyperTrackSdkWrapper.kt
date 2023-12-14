@@ -1,8 +1,6 @@
 package com.hypertrack.sdk.webview.android.common
 
-import com.hypertrack.sdk.*
 import com.hypertrack.sdk.android.HyperTrack
-import com.hypertrack.sdk.android.HyperTrack.metadata
 import com.hypertrack.sdk.android.Json
 import com.hypertrack.sdk.android.Result
 import com.hypertrack.sdk.webview.android.common.Serialization.deserializeIsAvailable

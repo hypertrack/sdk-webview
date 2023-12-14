@@ -1,152 +1,151 @@
 package com.hypertrack.sdk.webview.android
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.util.Log
-import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeDeviceIdFromInternalFormat
-import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeHyperTrackErrorsFromInternalFormat
-import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeLocationResponseFromInternalFormat
-import com.hypertrack.sdk.webview.android.WebViewSerialization.deserializeLocationWithDeviationResponseFromInternalFormat
-import com.hypertrack.sdk.webview.android.WebViewSerialization.serializeGeotagDataToInternalFormat
-import com.hypertrack.sdk.webview.android.WebViewSerialization.serializeIsTrackingToInternalFormat
-import com.hypertrack.sdk.webview.android.WebViewSerialization.serializeMetadataToInternalFormat
-import com.hypertrack.sdk.webview.android.WebViewSerialization.serializeNameToInternalFormat
+import android.provider.Settings
 import com.hypertrack.sdk.webview.android.common.Failure
 import com.hypertrack.sdk.webview.android.common.HyperTrackSdkWrapper
-import com.hypertrack.sdk.webview.android.common.Serialized
 import com.hypertrack.sdk.webview.android.common.Success
 import com.hypertrack.sdk.webview.android.common.WrapperResult
-import org.json.JSONObject
 
 object WebViewInterfaceWrapper {
 
     private val TAG = javaClass.simpleName
     private const val REQUEST_CODE = 55658769
 
-    fun addGeotag(dataJsonString: String): String {
-        return serializeGeotagDataToInternalFormat(dataJsonString, null)
+    fun addGeotag(geotagData: String): String {
+        return geotagData.parseToMap()
             .flatMapSuccess {
                 HyperTrackSdkWrapper.addGeotag(it)
             }
-            .flatMapSuccess {
-                deserializeLocationResponseFromInternalFormat(it)
+            .mapSuccess {
+                it.toJSONObject().toString()
             }
-            .toJsResponse()
+            .swallowFailureAndLogError("addGeotag", "{}")
     }
 
-    fun addGeotagWithExpectedLocation(
-        dataJsonString: String,
-        expectedLocationJsonString: String
-    ): String {
-        return serializeGeotagDataToInternalFormat(dataJsonString, expectedLocationJsonString)
+    fun addGeotagWithExpectedLocation(geotagData: String): String {
+        return geotagData.parseToMap()
             .flatMapSuccess {
                 HyperTrackSdkWrapper.addGeotag(it)
             }
-            .flatMapSuccess {
-                deserializeLocationWithDeviationResponseFromInternalFormat(it)
+            .mapSuccess {
+                it.toJSONObject().toString()
             }
-            .toJsResponse()
+            .swallowFailureAndLogError("addGeotagWithExpectedLocation", "{}")
     }
 
-    fun getDeviceId(): String? {
+    fun getDeviceId(): String {
         return HyperTrackSdkWrapper
             .getDeviceId()
-            .flatMapSuccess {
-                deserializeDeviceIdFromInternalFormat(it)
+            .mapSuccess {
+                it.toJSONObject().toString()
             }
-            .mapSuccess { it as String? }
-            .swallowFailureAndLogError("getDeviceId", null)
+            .swallowFailureAndLogError("getDeviceId", "{}")
     }
 
     fun getErrors(): String {
         return HyperTrackSdkWrapper
             .getErrors()
-            .flatMapSuccess {
-                deserializeHyperTrackErrorsFromInternalFormat(it)
+            .mapSuccess {
+                it.toJSONArray().toString()
             }
-            .swallowFailureAndLogError(
-                "getErrors", listOf(
-                    "wrapperError"
-                )
-            )
-            .toJsResponse()
+            .swallowFailureAndLogError("getErrors", "[]")
     }
 
-    fun getLocation(): String? {
+    fun getLocation(): String {
         return HyperTrackSdkWrapper
             .getLocation()
-            .flatMapSuccess {
-                deserializeLocationResponseFromInternalFormat(it)
+            .mapSuccess {
+                it.toJSONObject().toString()
             }
-            .mapSuccess { it as Serialized? }
-            .swallowFailureAndLogError("getLocation", null)
-            ?.toJsResponse()
+            .swallowFailureAndLogError("getLocation", "{}")
     }
 
     fun openAppSettings(activity: Activity) {
-        activity.startActivity(
-            Intent(
-                android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                android.net.Uri.parse("package:${activity.packageName}")
-            )
-        )
+        return WrapperResult
+            .tryAsResult {
+                activity.startActivity(
+                    Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.parse("package:${activity.packageName}")
+                    )
+                )
+            }
+            .swallowFailureAndLogError("openAppSettings", Unit)
     }
 
     fun requestLocationPermission(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity.requestPermissions(
-                listOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ).toTypedArray(),
-                REQUEST_CODE
-            )
-        }
+        return WrapperResult
+            .tryAsResult {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    activity.requestPermissions(
+                        listOf(
+                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION
+                        ).toTypedArray(),
+                        REQUEST_CODE
+                    )
+                }
+            }
+            .swallowFailureAndLogError("requestLocationPermission", Unit)
     }
 
     fun requestBackgroundLocationPermission(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            activity.requestPermissions(
-                listOf(
-                    android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ).toTypedArray(),
-                REQUEST_CODE
-            )
-        }
+        return WrapperResult
+            .tryAsResult {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    activity.requestPermissions(
+                        listOf(
+                            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        ).toTypedArray(),
+                        REQUEST_CODE
+                    )
+                }
+            }
+            .swallowFailureAndLogError("requestBackgroundLocationPermission", Unit)
     }
 
     fun requestNotificationPermission(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity.requestPermissions(
-                listOf(
-                    android.Manifest.permission.ACCESS_NOTIFICATION_POLICY
-                ).toTypedArray(),
-                REQUEST_CODE
-            )
-        }
+        return WrapperResult
+            .tryAsResult {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    activity.requestPermissions(
+                        listOf(
+                            android.Manifest.permission.ACCESS_NOTIFICATION_POLICY
+                        ).toTypedArray(),
+                        REQUEST_CODE
+                    )
+                }
+            }
+            .swallowFailureAndLogError("requestNotificationPermission", Unit)
     }
 
-    fun setIsTracking(isTracking: Boolean) {
-        return HyperTrackSdkWrapper
-            .setIsTracking(
-                serializeIsTrackingToInternalFormat(isTracking)
-            )
+    fun setIsTracking(isTracking: String) {
+        return isTracking
+            .parseToMap()
+            .flatMapSuccess {
+                HyperTrackSdkWrapper.setIsTracking(it)
+            }
             .swallowFailureAndLogError("setIsTracking", Unit)
     }
 
-    fun setMetadata(metadataString: String): String {
-        return serializeMetadataToInternalFormat(metadataString)
+    fun setMetadata(metadata: String) {
+        return metadata.parseToMap()
             .flatMapSuccess {
                 HyperTrackSdkWrapper.setMetadata(it)
             }
-            .toJsResponse()
+            .swallowFailureAndLogError("setMetadata", Unit)
     }
 
     fun setName(name: String) {
-        return HyperTrackSdkWrapper
-            .setName(serializeNameToInternalFormat(name))
+        return name.parseToMap()
+            .flatMapSuccess {
+                HyperTrackSdkWrapper.setName(it)
+            }
             .swallowFailureAndLogError("setName", Unit)
     }
 

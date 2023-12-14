@@ -1,12 +1,24 @@
 try {
-  function testCaseTs(id, call, check) {
+  function testCase(id, call, check) {
     try {
       let result = call();
-      console.log(check(result));
-      console.log(check(result) !== true);
+      if (result === undefined) {
+        throw Error(
+          JSON.stringify({
+            id: id,
+            type: "failure",
+            message: "result is undefined",
+          })
+        );
+      }
+      console.log(JSON.stringify(result));
       if (check != undefined && check(result) !== true) {
         throw Error(
-          JSON.stringify({ id: id, type: "failure", message: result })
+          JSON.stringify({
+            id: id,
+            type: "failure",
+            message: JSON.stringify(result),
+          })
         );
       }
     } catch (e) {
@@ -22,7 +34,7 @@ try {
     return regex.test(uuid);
   }
 
-  testCaseTs("getDeviceIdTs", HyperTrackTs.getDeviceId, function (result) {
+  testCase("getDeviceId", HyperTrack.getDeviceId, function (result) {
     return isValidUUID(result);
   });
 

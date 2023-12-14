@@ -24,180 +24,6 @@ private const val TYPE_LOCATION = "location"
 private const val TYPE_METADATA = "metadata"
 private const val TYPE_NAME = "name"
 
-@Suppress("UNCHECKED_CAST")
-internal object WebViewSerialization {
-
-    fun serializeGeotagDataToInternalFormat(
-        dataJsonString: String,
-        expectedLocationString: String?
-    ): WrapperResult<Serialized> {
-        return WrapperResult.tryAsResult {
-            mapOf(
-                KEY_GEOTAG_DATA to JSONObject(dataJsonString).toMap(),
-                KEY_GEOTAG_EXPECTED_LOCATION to expectedLocationString?.let {
-                    JSONObject(it).toMap().let { location ->
-                        mapOf(
-                            KEY_TYPE to TYPE_LOCATION,
-                            KEY_VALUE to location
-                        )
-                    }
-                }
-            )
-        }
-    }
-
-    fun serializeIsTrackingToInternalFormat(
-        isTracking: Boolean
-    ): Serialized {
-        return mapOf(
-            KEY_TYPE to "isTracking",
-            KEY_VALUE to isTracking
-        )
-    }
-
-    fun serializeMetadataToInternalFormat(
-        metadataString: String
-    ): WrapperResult<Serialized> {
-        return WrapperResult.tryAsResult {
-            JSONObject(metadataString)
-        }.mapSuccess {
-            mapOf(
-                KEY_TYPE to TYPE_METADATA,
-                KEY_VALUE to it.toMap()
-            )
-        }
-    }
-
-    fun serializeNameToInternalFormat(
-        name: String
-    ): Serialized {
-        return mapOf(
-            KEY_TYPE to TYPE_NAME,
-            KEY_VALUE to name
-        )
-    }
-
-    fun deserializeDeviceIdFromInternalFormat(
-        deviceId: Serialized
-    ): WrapperResult<String> {
-        if (deviceId[KEY_TYPE] != TYPE_DEVICE_ID) {
-            return Failure(Exception("Invalid device id type: $deviceId"))
-        }
-        return Success(deviceId[KEY_VALUE] as String)
-    }
-
-    fun deserializeHyperTrackErrorsFromInternalFormat(
-        hyperTrackErrors: List<Serialized>
-    ): WrapperResult<List<String>> {
-        return hyperTrackErrors.map { error ->
-            if (error[KEY_TYPE] != "error") {
-                return Failure(Exception("Invalid error type: $error"))
-            }
-            error[KEY_VALUE] as String
-        }.let { Success(it) }
-    }
-
-    private fun deserializeLocationErrorFromInternalFormat(
-        locationError: Serialized
-    ): WrapperResult<Serialized> {
-        return when {
-            locationError[KEY_TYPE] == "notRunning" -> {
-                Success(locationError)
-            }
-
-            locationError[KEY_TYPE] == "starting" -> {
-                Success(locationError)
-            }
-
-            locationError[KEY_TYPE] == "errors" -> {
-                deserializeHyperTrackErrorsFromInternalFormat(
-                    locationError[KEY_VALUE] as List<Serialized>
-                ).mapSuccess {
-                    mapOf(
-                        KEY_TYPE to "errors",
-                        KEY_VALUE to it
-                    )
-                }
-            }
-
-            else -> {
-                throw Exception("Invalid location error: $locationError")
-            }
-        }
-    }
-
-    fun deserializeLocationResponseFromInternalFormat(
-        locationResponse: Serialized
-    ): WrapperResult<Serialized> {
-        return when {
-            locationResponse[KEY_TYPE] == TYPE_SUCCESS -> {
-                mapOf(
-                    KEY_TYPE to TYPE_SUCCESS,
-                    KEY_VALUE to (locationResponse[KEY_VALUE] as Serialized)[KEY_VALUE]
-                ).let { Success(it) }
-            }
-
-            locationResponse[KEY_TYPE] == TYPE_FAILURE -> {
-                deserializeLocationErrorFromInternalFormat(
-                    locationResponse[KEY_VALUE] as Serialized
-                ).mapSuccess {
-                    mapOf(
-                        KEY_TYPE to TYPE_FAILURE,
-                        KEY_VALUE to it
-                    )
-                }
-            }
-
-            else -> {
-                Failure(Exception("Invalid location response: $locationResponse"))
-            }
-        }
-    }
-
-    fun deserializeLocationWithDeviationResponseFromInternalFormat(
-        locationWithDeviationResponse: Serialized
-    ): WrapperResult<Serialized> {
-        return when {
-            locationWithDeviationResponse[KEY_TYPE] == TYPE_SUCCESS -> {
-                WrapperResult.tryAsResult {
-                    val locationWithDeviationInternal =
-                        locationWithDeviationResponse[KEY_VALUE] as Serialized
-                    val locationInternal =
-                        (locationWithDeviationInternal[KEY_VALUE] as Serialized)[KEY_LOCATION] as Serialized
-                    val deviation =
-                        (locationWithDeviationInternal[KEY_VALUE] as Serialized)[KEY_DEVIATION] as Float
-
-                    mapOf<String, Any?>(
-                        KEY_TYPE to TYPE_SUCCESS,
-                        KEY_VALUE to mapOf(
-                            KEY_LOCATION to locationInternal[KEY_VALUE],
-                            KEY_DEVIATION to deviation
-                        )
-                    )
-                }
-            }
-
-            locationWithDeviationResponse[KEY_TYPE] == TYPE_FAILURE -> {
-                WrapperResult.tryAsResult {
-                    deserializeLocationErrorFromInternalFormat(
-                        locationWithDeviationResponse[KEY_VALUE] as Serialized
-                    ).mapSuccess {
-                        mapOf<String, Any?>(
-                            KEY_TYPE to TYPE_FAILURE,
-                            KEY_VALUE to it
-                        )
-                    }
-                }.flatMapSuccess { it }
-            }
-
-            else -> {
-                Failure(Exception("Invalid location response: $locationWithDeviationResponse"))
-            }
-        }
-    }
-
-}
-
 internal fun List<String>.toJsResponse(): String {
     return this.toJSONArray().toString()
 }
@@ -225,6 +51,12 @@ internal fun <T> WrapperResult<T>.toJsResponse(): String {
                 throw this.failure
             }
         }
+    }
+}
+
+internal fun String.parseToMap(): WrapperResult<Serialized> {
+    return WrapperResult.tryAsResult {
+        JSONObject(this).toMap()
     }
 }
 

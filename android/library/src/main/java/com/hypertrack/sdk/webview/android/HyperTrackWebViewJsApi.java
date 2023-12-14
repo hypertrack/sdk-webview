@@ -4,6 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.webkit.JavascriptInterface;
 
+/**
+ * This class is used to expose HyperTrack SDK methods to the WebView.
+ * The client should set is as a JavaScript interface for the WebView.
+ * It's written in Java instead of Kotlin for better compatibility with
+ * non-Kotlin projects. The params and return values are JSON strings.
+ */
 public class HyperTrackWebViewJsApi {
 
     private final Activity activity;
@@ -15,16 +21,13 @@ public class HyperTrackWebViewJsApi {
     public static final String API_NAME = "HyperTrackWebViewInterface";
 
     @JavascriptInterface
-    public String addGeotag(String dataJsonString) {
-        return WebViewInterfaceWrapper.INSTANCE.addGeotag(dataJsonString);
+    public String addGeotag(String geotagData) {
+        return WebViewInterfaceWrapper.INSTANCE.addGeotag(geotagData);
     }
 
     @JavascriptInterface
-    public String addGeotagWithExpectedLocation(String dataJsonString, String expectedLocationJsonString) {
-        return WebViewInterfaceWrapper.INSTANCE.addGeotagWithExpectedLocation(
-                dataJsonString,
-                expectedLocationJsonString
-        );
+    public String addGeotagWithExpectedLocation(String geotagData) {
+        return WebViewInterfaceWrapper.INSTANCE.addGeotagWithExpectedLocation(geotagData);
     }
 
     @JavascriptInterface
@@ -63,13 +66,13 @@ public class HyperTrackWebViewJsApi {
     }
 
     @JavascriptInterface
-    public void setIsTracking(boolean isTracking) {
+    public void setIsTracking(String isTracking) {
         WebViewInterfaceWrapper.INSTANCE.setIsTracking(isTracking);
     }
 
     @JavascriptInterface
-    public String setMetadata(String metadataString) {
-        return WebViewInterfaceWrapper.INSTANCE.setMetadata(metadataString);
+    public void setMetadata(String metadata) {
+        WebViewInterfaceWrapper.INSTANCE.setMetadata(metadata);
     }
 
     @JavascriptInterface
