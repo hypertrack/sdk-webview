@@ -12,7 +12,7 @@ public class HyperTrackWebViewJsApi {
         this.activity = activity;
     }
 
-    public static final String API_NAME = "HyperTrack";
+    public static final String API_NAME = "HyperTrackWebViewInterface";
 
     @JavascriptInterface
     public String addGeotag(String dataJsonString) {
