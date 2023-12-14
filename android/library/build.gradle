@@ -19,7 +19,6 @@ android {
     defaultConfig {
         minSdk version_min_sdk.toInteger()
         targetSdk version_target_sdk.toInteger()
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -73,5 +72,5 @@ dependencies {
     implementation "com.hypertrack:location-services-google:${version_hypertrack_sdk}"
     implementation "com.hypertrack:push-service-firebase:${version_hypertrack_sdk}"
 
-    testImplementation "junit:junit:$version_junit"
+    testImplementation "junit:junit:$test_version_junit"
 }

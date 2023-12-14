@@ -52,4 +52,12 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
     implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    androidTestImplementation "androidx.test.espresso:espresso-core:$android_test_version_espresso"
+    androidTestImplementation "androidx.test.espresso:espresso-web:$android_test_version_espresso"
+    androidTestImplementation "androidx.test.ext:junit-ktx:$android_test_version_junit_ktx"
+    androidTestImplementation "androidx.test:rules:$android_test_version_rules"
+    androidTestImplementation "androidx.test:runner:$android_test_version_runner"
+    androidTestImplementation "androidx.test.espresso:espresso-idling-resource:$android_test_version_espresso"
+
 }
