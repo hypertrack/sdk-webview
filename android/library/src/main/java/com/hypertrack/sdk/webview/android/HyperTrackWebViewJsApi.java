@@ -41,8 +41,33 @@ public class HyperTrackWebViewJsApi {
     }
 
     @JavascriptInterface
+    public String getIsAvailable() {
+        return WebViewInterfaceWrapper.INSTANCE.getIsAvailable();
+    }
+
+    @JavascriptInterface
+    public String getIsTracking() {
+        return WebViewInterfaceWrapper.INSTANCE.getIsTracking();
+    }
+
+    @JavascriptInterface
     public String getLocation() {
         return WebViewInterfaceWrapper.INSTANCE.getLocation();
+    }
+
+    @JavascriptInterface
+    public String getMetadata() {
+        return WebViewInterfaceWrapper.INSTANCE.getMetadata();
+    }
+
+    @JavascriptInterface
+    public String getName() {
+        return WebViewInterfaceWrapper.INSTANCE.getName();
+    }
+
+    @JavascriptInterface
+    public void locate() {
+        WebViewInterfaceWrapper.INSTANCE.locate();
     }
 
     @JavascriptInterface

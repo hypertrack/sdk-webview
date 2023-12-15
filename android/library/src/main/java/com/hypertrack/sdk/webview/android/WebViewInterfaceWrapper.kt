@@ -56,6 +56,24 @@ object WebViewInterfaceWrapper {
             .swallowFailureAndLogError("getErrors", "[]")
     }
 
+    fun getIsAvailable(): String {
+        return HyperTrackSdkWrapper
+            .getIsAvailable()
+            .mapSuccess {
+                it.toJSONObject().toString()
+            }
+            .swallowFailureAndLogError("getIsAvailable", "{}")
+    }
+
+    fun getIsTracking(): String {
+        return HyperTrackSdkWrapper
+            .getIsTracking()
+            .mapSuccess {
+                it.toJSONObject().toString()
+            }
+            .swallowFailureAndLogError("getIsTracking", "{}")
+    }
+
     fun getLocation(): String {
         return HyperTrackSdkWrapper
             .getLocation()
@@ -63,6 +81,28 @@ object WebViewInterfaceWrapper {
                 it.toJSONObject().toString()
             }
             .swallowFailureAndLogError("getLocation", "{}")
+    }
+
+    fun getMetadata(): String {
+        return HyperTrackSdkWrapper
+            .getMetadata()
+            .mapSuccess {
+                it.toJSONObject().toString()
+            }
+            .swallowFailureAndLogError("getMetadata", "{}")
+    }
+
+    fun getName(): String {
+        return HyperTrackSdkWrapper
+            .getName()
+            .mapSuccess {
+                it.toJSONObject().toString()
+            }
+            .swallowFailureAndLogError("getName", "{}")
+    }
+
+    fun locate() {
+
     }
 
     fun openAppSettings(activity: Activity) {

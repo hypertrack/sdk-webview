@@ -38,6 +38,14 @@ try {
     return isValidUUID(result);
   });
 
+  testCase("getIsTracking", HyperTrack.getIsTracking, function (result) {
+    return result === false;
+  });
+
+  testCase("getIsAvailable", HyperTrack.getIsAvailable, function (result) {
+    return result === false;
+  });
+
   TestInterface.callbackCall(JSON.stringify({ type: "success" }));
 } catch (e) {
   TestInterface.callbackCall(
