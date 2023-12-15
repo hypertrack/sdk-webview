@@ -1,5 +1,7 @@
 declare var HyperTrackWebViewInterface: HyperTrackWebViewInterfaceApi;
 
+// All names have HyperTrack prefix to avoid name collisions
+
 interface HyperTrackWebViewInterfaceApi {
   addGeotag(geotagData: string): string;
   addGeotagWithExpectedLocation(geotagData: string): string;
@@ -19,10 +21,10 @@ interface HyperTrackWebViewInterfaceApi {
   setIsTracking(isTracking: string): void;
   setMetadata(metadata: string): void;
   setName(name: string): void;
-  subscribeToErrors(): void;
-  subscribeToIsAvailable(): void;
-  subscribeToIsTracking(): void;
-  subscribeToLocation(): void;
+  subscribeToErrors(): HyperTrackSubscription;
+  subscribeToIsAvailable(): HyperTrackSubscription;
+  subscribeToIsTracking(): HyperTrackSubscription;
+  subscribeToLocation(): HyperTrackSubscription;
   unsubscribeFromErrors(): void;
   unsubscribeFromIsAvailable(): void;
   unsubscribeFromIsTracking(): void;
@@ -30,21 +32,25 @@ interface HyperTrackWebViewInterfaceApi {
 }
 
 interface HyperTrackApi {
-  addGeotag(data: Object): Result<HyperTrackLocation, LocationError>;
+  addGeotag(
+    data: Object
+  ): HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>;
   addGeotagWithExpectedLocation(
     data: Object,
     expectedLocation: HyperTrackLocation
-  ): Result<LocationWithDeviation, LocationError>;
+  ): HyperTrackResult<HyperTrackLocationWithDeviation, HyperTrackLocationError>;
   getDeviceId(): string;
   getErrors(): HyperTrackError[];
   getIsAvailable(): boolean;
   getIsTracking(): boolean;
-  getLocation(): Result<HyperTrackLocation, LocationError>;
+  getLocation(): HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>;
   getMetadata(): Object;
   getName(): string;
   locate(
-    callback: (location: Result<HyperTrackLocation, HyperTrackError[]>) => void
-  ): Subscription;
+    callback: (
+      location: HyperTrackResult<HyperTrackLocation, HyperTrackError[]>
+    ) => void
+  ): HyperTrackSubscription;
   openAppSettings(): void;
   requestBackgroundLocationPermission(): void;
   requestLocationPermission(): void;
@@ -53,38 +59,82 @@ interface HyperTrackApi {
   setIsTracking(isTracking: boolean): void;
   setMetadata(metadata: Object): void;
   setName(name: string): void;
-  subscribeToErrors(
-    listener: (errors: HyperTrackError[]) => void
-  ): Subscription;
-  subscribeToIsAvailable(
-    listener: (isAvailable: boolean) => void
-  ): Subscription;
-  subscribeToIsTracking(listener: (isTracking: boolean) => void): Subscription;
+  subscribeToErrors(listener: (errors: HyperTrackError[]) => void): void;
+  subscribeToIsAvailable(listener: (isAvailable: boolean) => void): void;
+  subscribeToIsTracking(listener: (isTracking: boolean) => void): void;
   subscribeToLocation(
-    listener: (location: Result<HyperTrackLocation, LocationError>) => void
-  ): Subscription;
+    listener: (
+      location: HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>
+    ) => void
+  ): void;
 }
 
-interface Subscription {
+interface HyperTrackSubscription {
   cancel(): void;
 }
 
-const EVENT_ERRORS = "errors";
-const EVENT_IS_AVAILABLE = "isAvailable";
-const EVENT_IS_TRACKING = "isTracking";
-const EVENT_LOCATE = "locate";
-const EVENT_LOCATION = "location";
+interface HyperTrackEventReceiverApi {
+  dispatchEvent(event: Object): void;
+}
 
-let locateSubscription: Subscription | undefined;
+type HyperTrackEvent =
+  | HyperTrackErrorsEvent
+  | HyperTrackIsAvailableEvent
+  | HyperTrackIsTrackingEvent
+  | HyperTrackLocateEvent
+  | HyperTrackLocationEvent;
 
-let instance: HyperTrackApi = {
-  addGeotag(data: Object): Result<HyperTrackLocation, LocationError> {
-    return deserializeLocationResponse(
+type HyperTrackErrorsEvent = {
+  name: typeof HYPERTRACK_EVENT_ERRORS;
+  data: HyperTrackErrorInternal[];
+};
+
+type HyperTrackIsAvailableEvent = {
+  name: typeof HYPERTRACK_EVENT_IS_AVAILABLE;
+  data: HyperTrackIsAvailable;
+};
+
+type HyperTrackIsTrackingEvent = {
+  name: typeof HYPERTRACK_EVENT_IS_TRACKING;
+  data: HyperTrackIsTracking;
+};
+
+type HyperTrackLocateEvent = {
+  name: typeof HYPERTRACK_EVENT_LOCATE;
+  data: HyperTrackResult<HyperTrackLocationInternal, HyperTrackErrorInternal[]>;
+};
+
+type HyperTrackLocationEvent = {
+  name: typeof HYPERTRACK_EVENT_LOCATION;
+  data: HyperTrackResult<
+    HyperTrackLocationInternal,
+    HyperTrackLocationErrorInternal
+  >;
+};
+
+const HYPERTRACK_EVENT_ERRORS = "errors";
+const HYPERTRACK_EVENT_IS_AVAILABLE = "isAvailable";
+const HYPERTRACK_EVENT_IS_TRACKING = "isTracking";
+const HYPERTRACK_EVENT_LOCATE = "locate";
+const HYPERTRACK_EVENT_LOCATION = "location";
+
+let hyperTrackLocateSubscription: HyperTrackSubscription | undefined;
+let hyperTrackLocationSubscription:
+  | ((
+      location: HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>
+    ) => void)
+  | undefined;
+
+let hyperTrackInstance: HyperTrackApi = {
+  addGeotag(
+    data: Object
+  ): HyperTrackResult<HyperTrackLocation, HyperTrackLocationError> {
+    return hyperTrackDeserializeLocationResponse(
       JSON.parse(
         HyperTrackWebViewInterface.addGeotag(
           JSON.stringify({
             data,
-          } as GeotagData)
+          } as HyperTrackGeotagData)
         )
       )
     );
@@ -93,8 +143,11 @@ let instance: HyperTrackApi = {
   addGeotagWithExpectedLocation(
     data: Object,
     expectedLocation: HyperTrackLocation
-  ): Result<LocationWithDeviation, LocationError> {
-    return deserializeLocationWithDeviationResponse(
+  ): HyperTrackResult<
+    HyperTrackLocationWithDeviation,
+    HyperTrackLocationError
+  > {
+    return hyperTrackDeserializeLocationWithDeviationResponse(
       JSON.parse(
         HyperTrackWebViewInterface.addGeotagWithExpectedLocation(
           JSON.stringify({
@@ -102,8 +155,8 @@ let instance: HyperTrackApi = {
             location: {
               type: "location",
               value: expectedLocation,
-            } as LocationInternal,
-          } as GeotagData)
+            } as HyperTrackLocationInternal,
+          } as HyperTrackGeotagData)
         )
       )
     );
@@ -114,7 +167,7 @@ let instance: HyperTrackApi = {
   },
 
   getErrors: function (): HyperTrackError[] {
-    return deserializeHyperTrackErrors(
+    return hyperTrackDeserializeHyperTrackErrors(
       JSON.parse(HyperTrackWebViewInterface.getErrors())
     );
   },
@@ -127,23 +180,28 @@ let instance: HyperTrackApi = {
     return JSON.parse(HyperTrackWebViewInterface.getIsTracking()).value;
   },
 
-  getLocation: function (): Result<HyperTrackLocation, LocationError> {
-    return deserializeLocationResponse(
+  getLocation: function (): HyperTrackResult<
+    HyperTrackLocation,
+    HyperTrackLocationError
+  > {
+    return hyperTrackDeserializeLocationResponse(
       JSON.parse(HyperTrackWebViewInterface.getLocation())
     );
   },
 
   getMetadata: function (): Object {
-    return deserializeMetadata(
+    return hyperTrackDeserializeMetadata(
       JSON.parse(HyperTrackWebViewInterface.getMetadata())
     );
   },
 
   getName: function (): string {
-    return deserializeName(JSON.parse(HyperTrackWebViewInterface.getName()));
+    return hyperTrackDeserializeName(
+      JSON.parse(HyperTrackWebViewInterface.getName())
+    );
   },
 
-  locate: function (): Subscription {
+  locate: function (): HyperTrackSubscription {
     return {
       cancel: () => {},
     };
@@ -179,7 +237,7 @@ let instance: HyperTrackApi = {
       JSON.stringify({
         type: "isAvailable",
         value: isAvailable,
-      } as IsAvailable)
+      } as HyperTrackIsAvailable)
     );
   },
 
@@ -188,7 +246,7 @@ let instance: HyperTrackApi = {
       JSON.stringify({
         type: "isTracking",
         value: isTracking,
-      } as IsTracking)
+      } as HyperTrackIsTracking)
     );
   },
 
@@ -197,7 +255,7 @@ let instance: HyperTrackApi = {
       JSON.stringify({
         type: "metadata",
         value: metadata,
-      } as Metadata)
+      } as HyperTrackMetadata)
     );
   },
 
@@ -206,13 +264,13 @@ let instance: HyperTrackApi = {
       JSON.stringify({
         type: "name",
         value: name,
-      } as Name)
+      } as HyperTrackName)
     );
   },
 
   subscribeToErrors: function (
     listener: (errors: HyperTrackError[]) => void
-  ): Subscription {
+  ): HyperTrackSubscription {
     return {
       cancel: () => {},
     };
@@ -220,7 +278,7 @@ let instance: HyperTrackApi = {
 
   subscribeToIsAvailable: function (
     listener: (isAvailable: boolean) => void
-  ): Subscription {
+  ): HyperTrackSubscription {
     return {
       cancel: () => {},
     };
@@ -228,27 +286,61 @@ let instance: HyperTrackApi = {
 
   subscribeToIsTracking: function (
     listener: (isTracking: boolean) => void
-  ): Subscription {
+  ): HyperTrackSubscription {
     return {
       cancel: () => {},
     };
   },
 
   subscribeToLocation: function (
-    listener: (location: Result<HyperTrackLocation, LocationError>) => void
-  ): Subscription {
+    listener: (
+      location: HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>
+    ) => void
+  ): HyperTrackSubscription {
+    hyperTrackLocationSubscription = listener;
+    HyperTrackWebViewInterface.subscribeToLocation();
     return {
-      cancel: () => {},
+      cancel: () => {
+        hyperTrackLocationSubscription = undefined;
+        HyperTrackWebViewInterface.unsubscribeFromLocation();
+      },
     };
   },
 };
 
+let hyperTrackEventReceiver: HyperTrackEventReceiverApi = {
+  dispatchEvent: function (event: HyperTrackEvent): void {
+    console.log("dispatchEvent", JSON.stringify(event));
+    switch (event.name) {
+      case HYPERTRACK_EVENT_ERRORS:
+        break;
+      case HYPERTRACK_EVENT_IS_AVAILABLE:
+        break;
+      case HYPERTRACK_EVENT_IS_TRACKING:
+        break;
+      case HYPERTRACK_EVENT_LOCATE:
+        break;
+      case HYPERTRACK_EVENT_LOCATION:
+        if (hyperTrackLocationSubscription) {
+          hyperTrackLocationSubscription(
+            hyperTrackDeserializeLocationResponse(event.data)
+          );
+        }
+        break;
+    }
+  },
+};
+
 const HyperTrack = (function () {
-  return instance;
+  return hyperTrackInstance;
+})();
+
+const HyperTrackEventReceiver = (function () {
+  return hyperTrackEventReceiver;
 })();
 
 /** @ignore */
-function deserializeHyperTrackErrors(
+function hyperTrackDeserializeHyperTrackErrors(
   errors: HyperTrackErrorInternal[]
 ): HyperTrackError[] {
   let res = errors.map((error: HyperTrackErrorInternal) => {
@@ -264,9 +356,12 @@ function deserializeHyperTrackErrors(
 }
 
 /** @ignore */
-function deserializeLocateResponse(
-  response: Result<LocationInternal, HyperTrackErrorInternal[]>
-): Result<HyperTrackLocation, HyperTrackError[]> {
+function hyperTrackDeserializeLocateResponse(
+  response: HyperTrackResult<
+    HyperTrackLocationInternal,
+    HyperTrackErrorInternal[]
+  >
+): HyperTrackResult<HyperTrackLocation, HyperTrackError[]> {
   switch (response.type) {
     case "success":
       return {
@@ -276,15 +371,15 @@ function deserializeLocateResponse(
     case "failure":
       return {
         type: "failure",
-        value: deserializeHyperTrackErrors(response.value),
+        value: hyperTrackDeserializeHyperTrackErrors(response.value),
       };
   }
 }
 
 /** @ignore */
-function deserializeLocationError(
-  locationError: LocationErrorInternal
-): LocationError {
+function hyperTrackDeserializeLocationError(
+  locationError: HyperTrackLocationErrorInternal
+): HyperTrackLocationError {
   switch (locationError.type) {
     case "notRunning":
     case "starting":
@@ -292,15 +387,18 @@ function deserializeLocationError(
     case "errors":
       return {
         type: "errors",
-        value: deserializeHyperTrackErrors(locationError.value),
+        value: hyperTrackDeserializeHyperTrackErrors(locationError.value),
       };
   }
 }
 
 /** @ignore */
-function deserializeLocationResponse(
-  response: Result<LocationInternal, LocationErrorInternal>
-): Result<HyperTrackLocation, LocationError> {
+function hyperTrackDeserializeLocationResponse(
+  response: HyperTrackResult<
+    HyperTrackLocationInternal,
+    HyperTrackLocationErrorInternal
+  >
+): HyperTrackResult<HyperTrackLocation, HyperTrackLocationError> {
   switch (response.type) {
     case "success":
       return {
@@ -310,20 +408,23 @@ function deserializeLocationResponse(
     case "failure":
       return {
         type: "failure",
-        value: deserializeLocationError(response.value),
+        value: hyperTrackDeserializeLocationError(response.value),
       };
   }
 }
 
 /** @ignore */
-function deserializeLocationWithDeviationResponse(
-  response: Result<LocationWithDeviationInternal, LocationErrorInternal>
-): Result<LocationWithDeviation, LocationError> {
+function hyperTrackDeserializeLocationWithDeviationResponse(
+  response: HyperTrackResult<
+    HyperTrackLocationWithDeviationInternal,
+    HyperTrackLocationErrorInternal
+  >
+): HyperTrackResult<HyperTrackLocationWithDeviation, HyperTrackLocationError> {
   switch (response.type) {
     case "success":
-      const locationWithDeviationInternal: LocationWithDeviationInternal =
+      const locationWithDeviationInternal: HyperTrackLocationWithDeviationInternal =
         response.value;
-      const locationInternal: LocationInternal =
+      const locationInternal: HyperTrackLocationInternal =
         locationWithDeviationInternal.value.location;
 
       return {
@@ -331,18 +432,18 @@ function deserializeLocationWithDeviationResponse(
         value: {
           location: locationInternal.value,
           deviation: locationWithDeviationInternal.value.deviation,
-        } as LocationWithDeviation,
+        } as HyperTrackLocationWithDeviation,
       };
     case "failure":
       return {
         type: "failure",
-        value: deserializeLocationError(response.value),
+        value: hyperTrackDeserializeLocationError(response.value),
       };
   }
 }
 
 /** @ignore */
-function deserializeMetadata(metadata: Metadata): Object {
+function hyperTrackDeserializeMetadata(metadata: HyperTrackMetadata): Object {
   if (metadata.type != "metadata") {
     throw new Error(`Invalid metadata: ${JSON.stringify(metadata)}`);
   }
@@ -350,7 +451,7 @@ function deserializeMetadata(metadata: Metadata): Object {
 }
 
 /** @ignore */
-function deserializeName(name: Name): string {
+function hyperTrackDeserializeName(name: HyperTrackName): string {
   if (name.type != "name") {
     throw new Error(`Invalid name: ${JSON.stringify(name)}`);
   }
@@ -358,7 +459,9 @@ function deserializeName(name: Name): string {
 }
 
 /** @ignore */
-function isLocation(obj: HyperTrackLocation): obj is HyperTrackLocation {
+function hyperTrackIsLocation(
+  obj: HyperTrackLocation
+): obj is HyperTrackLocation {
   return (
     "latitude" in obj &&
     typeof obj.latitude == "number" &&
@@ -369,14 +472,14 @@ function isLocation(obj: HyperTrackLocation): obj is HyperTrackLocation {
 
 // Internal
 
-type DeviceId = {
+type HyperTrackDeviceId = {
   type: "deviceID";
   value: string;
 };
 
-type GeotagData = {
+type HyperTrackGeotagData = {
   data: Object;
-  expectedLocation?: LocationInternal;
+  expectedLocation?: HyperTrackLocationInternal;
 };
 
 type HyperTrackErrorInternal = {
@@ -384,30 +487,33 @@ type HyperTrackErrorInternal = {
   value: string;
 };
 
-type IsAvailable = {
+type HyperTrackIsAvailable = {
   type: "isAvailable";
   value: boolean;
 };
 
-type IsTracking = {
+type HyperTrackIsTracking = {
   type: "isTracking";
   value: boolean;
 };
 
-type NotRunning = {
+type HyperTrackNotRunning = {
   type: "notRunning";
 };
-type Starting = {
+type HyperTrackStarting = {
   type: "starting";
 };
-type ErrorsInternal = {
+type HyperTrackErrorsInternal = {
   type: "errors";
   value: HyperTrackErrorInternal[];
 };
 
-type LocationErrorInternal = NotRunning | Starting | ErrorsInternal;
+type HyperTrackLocationErrorInternal =
+  | HyperTrackNotRunning
+  | HyperTrackStarting
+  | HyperTrackErrorsInternal;
 
-type LocationInternal = {
+type HyperTrackLocationInternal = {
   type: "location";
   value: {
     latitude: number;
@@ -415,20 +521,20 @@ type LocationInternal = {
   };
 };
 
-type LocationWithDeviationInternal = {
+type HyperTrackLocationWithDeviationInternal = {
   type: "locationWithDeviation";
   value: {
-    location: LocationInternal;
+    location: HyperTrackLocationInternal;
     deviation: number;
   };
 };
 
-type Metadata = {
+type HyperTrackMetadata = {
   type: "metadata";
   value: Object;
 };
 
-type Name = {
+type HyperTrackName = {
   type: "name";
   value: string;
 };
@@ -517,26 +623,29 @@ type HyperTrackLocation = {
   longitude: number;
 };
 
-type Errors = {
+type HyperTrackErrors = {
   type: "errors";
   value: HyperTrackError[];
 };
 
-type LocationError = NotRunning | Starting | Errors;
+type HyperTrackLocationError =
+  | HyperTrackNotRunning
+  | HyperTrackStarting
+  | HyperTrackErrors;
 
-type LocationWithDeviation = {
+type HyperTrackLocationWithDeviation = {
   location: HyperTrackLocation;
   deviation: number;
 };
 
-type Success<S> = {
+type HyperTrackSuccess<S> = {
   type: "success";
   value: S;
 };
 
-type Failure<F> = {
+type HyperTrackFailure<F> = {
   type: "failure";
   value: F;
 };
 
-type Result<S, F> = Success<S> | Failure<F>;
+type HyperTrackResult<S, F> = HyperTrackSuccess<S> | HyperTrackFailure<F>;

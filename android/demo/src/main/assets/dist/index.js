@@ -1,18 +1,19 @@
 "use strict";
-const EVENT_ERRORS = "errors";
-const EVENT_IS_AVAILABLE = "isAvailable";
-const EVENT_IS_TRACKING = "isTracking";
-const EVENT_LOCATE = "locate";
-const EVENT_LOCATION = "location";
-let locateSubscription;
-let instance = {
+const HYPERTRACK_EVENT_ERRORS = "errors";
+const HYPERTRACK_EVENT_IS_AVAILABLE = "isAvailable";
+const HYPERTRACK_EVENT_IS_TRACKING = "isTracking";
+const HYPERTRACK_EVENT_LOCATE = "locate";
+const HYPERTRACK_EVENT_LOCATION = "location";
+let hyperTrackLocateSubscription;
+let hyperTrackLocationSubscription;
+let hyperTrackInstance = {
     addGeotag(data) {
-        return deserializeLocationResponse(JSON.parse(HyperTrackWebViewInterface.addGeotag(JSON.stringify({
+        return hyperTrackDeserializeLocationResponse(JSON.parse(HyperTrackWebViewInterface.addGeotag(JSON.stringify({
             data,
         }))));
     },
     addGeotagWithExpectedLocation(data, expectedLocation) {
-        return deserializeLocationWithDeviationResponse(JSON.parse(HyperTrackWebViewInterface.addGeotagWithExpectedLocation(JSON.stringify({
+        return hyperTrackDeserializeLocationWithDeviationResponse(JSON.parse(HyperTrackWebViewInterface.addGeotagWithExpectedLocation(JSON.stringify({
             data,
             location: {
                 type: "location",
@@ -24,7 +25,7 @@ let instance = {
         return JSON.parse(HyperTrackWebViewInterface.getDeviceId()).value;
     },
     getErrors: function () {
-        return deserializeHyperTrackErrors(JSON.parse(HyperTrackWebViewInterface.getErrors()));
+        return hyperTrackDeserializeHyperTrackErrors(JSON.parse(HyperTrackWebViewInterface.getErrors()));
     },
     getIsAvailable: function () {
         return JSON.parse(HyperTrackWebViewInterface.getIsAvailable()).value;
@@ -33,13 +34,13 @@ let instance = {
         return JSON.parse(HyperTrackWebViewInterface.getIsTracking()).value;
     },
     getLocation: function () {
-        return deserializeLocationResponse(JSON.parse(HyperTrackWebViewInterface.getLocation()));
+        return hyperTrackDeserializeLocationResponse(JSON.parse(HyperTrackWebViewInterface.getLocation()));
     },
     getMetadata: function () {
-        return deserializeMetadata(JSON.parse(HyperTrackWebViewInterface.getMetadata()));
+        return hyperTrackDeserializeMetadata(JSON.parse(HyperTrackWebViewInterface.getMetadata()));
     },
     getName: function () {
-        return deserializeName(JSON.parse(HyperTrackWebViewInterface.getName()));
+        return hyperTrackDeserializeName(JSON.parse(HyperTrackWebViewInterface.getName()));
     },
     locate: function () {
         return {
@@ -107,16 +108,44 @@ let instance = {
         };
     },
     subscribeToLocation: function (listener) {
+        hyperTrackLocationSubscription = listener;
+        HyperTrackWebViewInterface.subscribeToLocation();
         return {
-            cancel: () => { },
+            cancel: () => {
+                hyperTrackLocationSubscription = undefined;
+                HyperTrackWebViewInterface.unsubscribeFromLocation();
+            },
         };
     },
 };
+let hyperTrackEventReceiver = {
+    dispatchEvent: function (event) {
+        console.log("dispatchEvent", JSON.stringify(event));
+        switch (event.name) {
+            case HYPERTRACK_EVENT_ERRORS:
+                break;
+            case HYPERTRACK_EVENT_IS_AVAILABLE:
+                break;
+            case HYPERTRACK_EVENT_IS_TRACKING:
+                break;
+            case HYPERTRACK_EVENT_LOCATE:
+                break;
+            case HYPERTRACK_EVENT_LOCATION:
+                if (hyperTrackLocationSubscription) {
+                    hyperTrackLocationSubscription(hyperTrackDeserializeLocationResponse(event.data));
+                }
+                break;
+        }
+    },
+};
 const HyperTrack = (function () {
-    return instance;
+    return hyperTrackInstance;
+})();
+const HyperTrackEventReceiver = (function () {
+    return hyperTrackEventReceiver;
 })();
 /** @ignore */
-function deserializeHyperTrackErrors(errors) {
+function hyperTrackDeserializeHyperTrackErrors(errors) {
     let res = errors.map((error) => {
         if (error.type != "error") {
             throw new Error("Invalid error type");
@@ -126,7 +155,7 @@ function deserializeHyperTrackErrors(errors) {
     return res;
 }
 /** @ignore */
-function deserializeLocateResponse(response) {
+function hyperTrackDeserializeLocateResponse(response) {
     switch (response.type) {
         case "success":
             return {
@@ -136,12 +165,12 @@ function deserializeLocateResponse(response) {
         case "failure":
             return {
                 type: "failure",
-                value: deserializeHyperTrackErrors(response.value),
+                value: hyperTrackDeserializeHyperTrackErrors(response.value),
             };
     }
 }
 /** @ignore */
-function deserializeLocationError(locationError) {
+function hyperTrackDeserializeLocationError(locationError) {
     switch (locationError.type) {
         case "notRunning":
         case "starting":
@@ -149,12 +178,12 @@ function deserializeLocationError(locationError) {
         case "errors":
             return {
                 type: "errors",
-                value: deserializeHyperTrackErrors(locationError.value),
+                value: hyperTrackDeserializeHyperTrackErrors(locationError.value),
             };
     }
 }
 /** @ignore */
-function deserializeLocationResponse(response) {
+function hyperTrackDeserializeLocationResponse(response) {
     switch (response.type) {
         case "success":
             return {
@@ -164,12 +193,12 @@ function deserializeLocationResponse(response) {
         case "failure":
             return {
                 type: "failure",
-                value: deserializeLocationError(response.value),
+                value: hyperTrackDeserializeLocationError(response.value),
             };
     }
 }
 /** @ignore */
-function deserializeLocationWithDeviationResponse(response) {
+function hyperTrackDeserializeLocationWithDeviationResponse(response) {
     switch (response.type) {
         case "success":
             const locationWithDeviationInternal = response.value;
@@ -184,26 +213,26 @@ function deserializeLocationWithDeviationResponse(response) {
         case "failure":
             return {
                 type: "failure",
-                value: deserializeLocationError(response.value),
+                value: hyperTrackDeserializeLocationError(response.value),
             };
     }
 }
 /** @ignore */
-function deserializeMetadata(metadata) {
+function hyperTrackDeserializeMetadata(metadata) {
     if (metadata.type != "metadata") {
         throw new Error(`Invalid metadata: ${JSON.stringify(metadata)}`);
     }
     return metadata.value;
 }
 /** @ignore */
-function deserializeName(name) {
+function hyperTrackDeserializeName(name) {
     if (name.type != "name") {
         throw new Error(`Invalid name: ${JSON.stringify(name)}`);
     }
     return name.value;
 }
 /** @ignore */
-function isLocation(obj) {
+function hyperTrackIsLocation(obj) {
     return ("latitude" in obj &&
         typeof obj.latitude == "number" &&
         "longitude" in obj &&

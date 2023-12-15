@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             }
             addJavascriptInterface(TestInterface, "TestInterface")
             addJavascriptInterface(
-                HyperTrackWebViewJsApi(this@MainActivity), HyperTrackWebViewJsApi.API_NAME
+                HyperTrackWebViewJsApi(this@MainActivity, webView), HyperTrackWebViewJsApi.API_NAME
             )
         }
 

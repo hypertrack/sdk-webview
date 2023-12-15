@@ -1,6 +1,10 @@
+let locationSubscription = null;
+
 try {
   let deviceId = HyperTrack.getDeviceId();
   document.getElementById("device-id").innerText = deviceId;
+
+  subscribeToListeners();
 } catch (e) {
   alert(e);
 }
@@ -124,5 +128,25 @@ function requestNotificationsPermission() {
     HyperTrack.requestNotificationsPermission();
   } catch (e) {
     alert(e);
+  }
+}
+
+function subscribeToListeners() {
+  locationSubscription = HyperTrack.subscribeToLocation(function (
+    locationResult
+  ) {
+    console.log("locationResult", JSON.stringify(locationResult, null, 2));
+    document.getElementById("location").innerText = JSON.stringify(
+      locationResult,
+      null,
+      2
+    );
+  });
+}
+
+function unsubscribeFromListeners() {
+  if (locationSubscription) {
+    locationSubscription.cancel();
+    locationSubscription = null;
   }
 }

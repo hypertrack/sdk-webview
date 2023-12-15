@@ -3,6 +3,7 @@ package com.hypertrack.sdk.webview.android;
 import android.app.Activity;
 import android.content.Context;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 
 /**
  * This class is used to expose HyperTrack SDK methods to the WebView.
@@ -12,102 +13,110 @@ import android.webkit.JavascriptInterface;
  */
 public class HyperTrackWebViewJsApi {
 
-    private final Activity activity;
+    private final WebViewInterfaceWrapper wrapper;
 
-    public HyperTrackWebViewJsApi(Activity activity) {
-        this.activity = activity;
+    public HyperTrackWebViewJsApi(
+            Activity activity,
+            WebView webView
+    ) {
+        this.wrapper = new WebViewInterfaceWrapper(activity, webView);
     }
 
     public static final String API_NAME = "HyperTrackWebViewInterface";
 
     @JavascriptInterface
     public String addGeotag(String geotagData) {
-        return WebViewInterfaceWrapper.INSTANCE.addGeotag(geotagData);
+        return wrapper.addGeotag(geotagData);
     }
 
     @JavascriptInterface
     public String addGeotagWithExpectedLocation(String geotagData) {
-        return WebViewInterfaceWrapper.INSTANCE.addGeotagWithExpectedLocation(geotagData);
+        return wrapper.addGeotagWithExpectedLocation(geotagData);
     }
 
     @JavascriptInterface
     public String getDeviceId() {
-        return WebViewInterfaceWrapper.INSTANCE.getDeviceId();
+        return wrapper.getDeviceId();
     }
 
     @JavascriptInterface
     public String getErrors() {
-        return WebViewInterfaceWrapper.INSTANCE.getErrors();
+        return wrapper.getErrors();
     }
 
     @JavascriptInterface
     public String getIsAvailable() {
-        return WebViewInterfaceWrapper.INSTANCE.getIsAvailable();
+        return wrapper.getIsAvailable();
     }
 
     @JavascriptInterface
     public String getIsTracking() {
-        return WebViewInterfaceWrapper.INSTANCE.getIsTracking();
+        return wrapper.getIsTracking();
     }
 
     @JavascriptInterface
     public String getLocation() {
-        return WebViewInterfaceWrapper.INSTANCE.getLocation();
+        return wrapper.getLocation();
     }
 
     @JavascriptInterface
     public String getMetadata() {
-        return WebViewInterfaceWrapper.INSTANCE.getMetadata();
+        return wrapper.getMetadata();
     }
 
     @JavascriptInterface
     public String getName() {
-        return WebViewInterfaceWrapper.INSTANCE.getName();
+        return wrapper.getName();
     }
 
     @JavascriptInterface
     public void locate() {
-        WebViewInterfaceWrapper.INSTANCE.locate();
+        wrapper.locate();
     }
 
     @JavascriptInterface
     public void openAppSettings() {
-        WebViewInterfaceWrapper.INSTANCE.openAppSettings(activity);
+        wrapper.openAppSettings();
     }
 
     @JavascriptInterface
     public void requestLocationPermission() {
-        WebViewInterfaceWrapper.INSTANCE.requestLocationPermission(activity);
+        wrapper.requestLocationPermission();
     }
 
     @JavascriptInterface
     public void requestBackgroundLocationPermission() {
-        WebViewInterfaceWrapper.INSTANCE.requestBackgroundLocationPermission(activity);
+        wrapper.requestBackgroundLocationPermission();
     }
 
     @JavascriptInterface
     public void requestNotificationsPermission() {
-        WebViewInterfaceWrapper.INSTANCE.requestNotificationPermission(activity);
+        wrapper.requestNotificationPermission();
     }
 
     @JavascriptInterface
     public void setIsAvailable(String isAvailable) {
-        WebViewInterfaceWrapper.INSTANCE.setIsAvailable(isAvailable);
+        wrapper.setIsAvailable(isAvailable);
     }
 
     @JavascriptInterface
     public void setIsTracking(String isTracking) {
-        WebViewInterfaceWrapper.INSTANCE.setIsTracking(isTracking);
+        wrapper.setIsTracking(isTracking);
     }
 
     @JavascriptInterface
     public void setMetadata(String metadata) {
-        WebViewInterfaceWrapper.INSTANCE.setMetadata(metadata);
+        wrapper.setMetadata(metadata);
     }
 
     @JavascriptInterface
     public void setName(String name) {
-        WebViewInterfaceWrapper.INSTANCE.setName(name);
+        wrapper.setName(name);
     }
 
+    @JavascriptInterface
+    public void subscribeToLocation() {
+        wrapper.subscribeToLocation();
+    }
+    
 }

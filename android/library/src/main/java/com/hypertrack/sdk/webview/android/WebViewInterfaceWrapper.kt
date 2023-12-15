@@ -6,15 +6,38 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.provider.Settings
+import android.webkit.WebView
+import com.hypertrack.sdk.android.HyperTrack
 import com.hypertrack.sdk.webview.android.common.Failure
 import com.hypertrack.sdk.webview.android.common.HyperTrackSdkWrapper
+import com.hypertrack.sdk.webview.android.common.Serialization.serializeLocationResult
+import com.hypertrack.sdk.webview.android.common.Serialized
 import com.hypertrack.sdk.webview.android.common.Success
 import com.hypertrack.sdk.webview.android.common.WrapperResult
 
-object WebViewInterfaceWrapper {
+/**
+ * All methods are called from the JavaBridge thread.
+ */
+class WebViewInterfaceWrapper(
+    private val activity: Activity,
+    private val webView: WebView
+) {
 
-    private val TAG = javaClass.simpleName
-    private const val REQUEST_CODE = 55658769
+    private val locationSubscription: HyperTrack.Cancellable
+
+    private var locationSubscriptionEnabled: Boolean = false
+
+    init {
+        locationSubscription = HyperTrack.subscribeToLocation {
+            WrapperResult
+                .tryAsResult {
+                    if (locationSubscriptionEnabled) {
+                        sendEvent(EVENT_LOCATION, serializeLocationResult(it))
+                    }
+                }
+                .crashOnFailure()
+        }
+    }
 
     fun addGeotag(geotagData: String): String {
         return geotagData.parseToMap()
@@ -24,7 +47,7 @@ object WebViewInterfaceWrapper {
             .mapSuccess {
                 it.toJSONObject().toString()
             }
-            .swallowFailureAndLogError("addGeotag", "{}")
+            .crashOnFailure()
     }
 
     fun addGeotagWithExpectedLocation(geotagData: String): String {
@@ -35,7 +58,7 @@ object WebViewInterfaceWrapper {
             .mapSuccess {
                 it.toJSONObject().toString()
             }
-            .swallowFailureAndLogError("addGeotagWithExpectedLocation", "{}")
+            .crashOnFailure()
     }
 
     fun getDeviceId(): String {
@@ -44,7 +67,7 @@ object WebViewInterfaceWrapper {
             .mapSuccess {
                 it.toJSONObject().toString()
             }
-            .swallowFailureAndLogError("getDeviceId", "{}")
+            .crashOnFailure()
     }
 
     fun getErrors(): String {
@@ -53,7 +76,7 @@ object WebViewInterfaceWrapper {
             .mapSuccess {
                 it.toJSONArray().toString()
             }
-            .swallowFailureAndLogError("getErrors", "[]")
+            .crashOnFailure()
     }
 
     fun getIsAvailable(): String {
@@ -62,7 +85,7 @@ object WebViewInterfaceWrapper {
             .mapSuccess {
                 it.toJSONObject().toString()
             }
-            .swallowFailureAndLogError("getIsAvailable", "{}")
+            .crashOnFailure()
     }
 
     fun getIsTracking(): String {
@@ -71,7 +94,7 @@ object WebViewInterfaceWrapper {
             .mapSuccess {
                 it.toJSONObject().toString()
             }
-            .swallowFailureAndLogError("getIsTracking", "{}")
+            .crashOnFailure()
     }
 
     fun getLocation(): String {
@@ -80,7 +103,7 @@ object WebViewInterfaceWrapper {
             .mapSuccess {
                 it.toJSONObject().toString()
             }
-            .swallowFailureAndLogError("getLocation", "{}")
+            .crashOnFailure()
     }
 
     fun getMetadata(): String {
@@ -89,7 +112,7 @@ object WebViewInterfaceWrapper {
             .mapSuccess {
                 it.toJSONObject().toString()
             }
-            .swallowFailureAndLogError("getMetadata", "{}")
+            .crashOnFailure()
     }
 
     fun getName(): String {
@@ -98,14 +121,14 @@ object WebViewInterfaceWrapper {
             .mapSuccess {
                 it.toJSONObject().toString()
             }
-            .swallowFailureAndLogError("getName", "{}")
+            .crashOnFailure()
     }
 
     fun locate() {
 
     }
 
-    fun openAppSettings(activity: Activity) {
+    fun openAppSettings() {
         return WrapperResult
             .tryAsResult {
                 activity.startActivity(
@@ -115,10 +138,10 @@ object WebViewInterfaceWrapper {
                     )
                 )
             }
-            .swallowFailureAndLogError("openAppSettings", Unit)
+            .crashOnFailure()
     }
 
-    fun requestLocationPermission(activity: Activity) {
+    fun requestLocationPermission() {
         return WrapperResult
             .tryAsResult {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -131,10 +154,10 @@ object WebViewInterfaceWrapper {
                     )
                 }
             }
-            .swallowFailureAndLogError("requestLocationPermission", Unit)
+            .crashOnFailure()
     }
 
-    fun requestBackgroundLocationPermission(activity: Activity) {
+    fun requestBackgroundLocationPermission() {
         return WrapperResult
             .tryAsResult {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -146,10 +169,10 @@ object WebViewInterfaceWrapper {
                     )
                 }
             }
-            .swallowFailureAndLogError("requestBackgroundLocationPermission", Unit)
+            .crashOnFailure()
     }
 
-    fun requestNotificationPermission(activity: Activity) {
+    fun requestNotificationPermission() {
         return WrapperResult
             .tryAsResult {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -161,7 +184,7 @@ object WebViewInterfaceWrapper {
                     )
                 }
             }
-            .swallowFailureAndLogError("requestNotificationPermission", Unit)
+            .crashOnFailure()
     }
 
     fun setIsAvailable(isAvailable: String) {
@@ -170,7 +193,7 @@ object WebViewInterfaceWrapper {
             .flatMapSuccess {
                 HyperTrackSdkWrapper.setIsAvailable(it)
             }
-            .swallowFailureAndLogError("setIsAvailable", Unit)
+            .crashOnFailure()
     }
 
     fun setIsTracking(isTracking: String) {
@@ -179,7 +202,7 @@ object WebViewInterfaceWrapper {
             .flatMapSuccess {
                 HyperTrackSdkWrapper.setIsTracking(it)
             }
-            .swallowFailureAndLogError("setIsTracking", Unit)
+            .crashOnFailure()
     }
 
     fun setMetadata(metadata: String) {
@@ -187,7 +210,7 @@ object WebViewInterfaceWrapper {
             .flatMapSuccess {
                 HyperTrackSdkWrapper.setMetadata(it)
             }
-            .swallowFailureAndLogError("setMetadata", Unit)
+            .crashOnFailure()
     }
 
     fun setName(name: String) {
@@ -195,20 +218,56 @@ object WebViewInterfaceWrapper {
             .flatMapSuccess {
                 HyperTrackSdkWrapper.setName(it)
             }
-            .swallowFailureAndLogError("setName", Unit)
+            .crashOnFailure()
     }
 
-    private fun <T> WrapperResult<T>.swallowFailureAndLogError(
-        methodName: String,
-        defaultValue: T
-    ): T {
+    fun subscribeToLocation() {
+        WrapperResult
+            .tryAsResult {
+                locationSubscriptionEnabled = true
+                sendEvent(EVENT_LOCATION, serializeLocationResult(HyperTrack.location))
+            }
+            .crashOnFailure()
+    }
+
+    private fun <T> WrapperResult<T>.crashOnFailure(): T {
         return when (this) {
             is Success -> this.success
-            is Failure -> {
-                Log.e(TAG, "$methodName: ${this.failure}")
-                defaultValue
-            }
+            is Failure -> throwExceptionOnUiThread(this.failure)
         }
+    }
+
+    /**
+     * We need this to properly crash the app because all methods are called from the JavaBridge
+     * thread, and WebView swallow all the crashes from this thread.
+     */
+    private fun <T> throwExceptionOnUiThread(exception: Throwable): T {
+        activity.runOnUiThread {
+            throw exception
+        }
+        throw exception
+    }
+
+    private fun sendEvent(name: String, data: Serialized) {
+        activity.runOnUiThread {
+            webView.evaluateJavascript(
+                """
+                HyperTrackEventReceiver.dispatchEvent(
+                    {
+                        name: "$name",
+                        data: ${data.toJSONObject()}
+                    }
+                )
+            """.trimIndent(),
+                null
+            )
+        }
+    }
+
+    companion object {
+        private const val REQUEST_CODE = 55658769
+
+        private const val EVENT_LOCATION = "location"
     }
 
 }
