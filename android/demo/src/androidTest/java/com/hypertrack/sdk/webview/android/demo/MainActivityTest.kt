@@ -32,7 +32,7 @@ class MainActivityTest {
             .openRawResource(TestR.raw.tests)
             .bufferedReader()
             .use { it.readText() }
-        
+
         onView(withId(R.id.webView))
             .check(matches(isDisplayed()))
             .perform(RunJsAction(jsCode) {
@@ -42,7 +42,6 @@ class MainActivityTest {
         // Block the JS thread to make sure all the JS tests are finished
         onWebView()
             .withElement(findElement(Locator.ID, "test"))
-            .perform(webClick())
 
         assertEquals(Success, TestInterface.testResult)
     }

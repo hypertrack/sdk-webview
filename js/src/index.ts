@@ -192,7 +192,7 @@ let instance: HyperTrackApi = {
     );
   },
 
-  setMetadata: function (metadata: string): void {
+  setMetadata: function (metadata: Object): void {
     HyperTrackWebViewInterface.setMetadata(
       JSON.stringify({
         type: "metadata",
@@ -251,7 +251,6 @@ const HyperTrack = (function () {
 function deserializeHyperTrackErrors(
   errors: HyperTrackErrorInternal[]
 ): HyperTrackError[] {
-  console.log(JSON.stringify(errors));
   let res = errors.map((error: HyperTrackErrorInternal) => {
     if (error.type != "error") {
       throw new Error("Invalid error type");

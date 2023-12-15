@@ -164,6 +164,15 @@ object WebViewInterfaceWrapper {
             .swallowFailureAndLogError("requestNotificationPermission", Unit)
     }
 
+    fun setIsAvailable(isAvailable: String) {
+        return isAvailable
+            .parseToMap()
+            .flatMapSuccess {
+                HyperTrackSdkWrapper.setIsAvailable(it)
+            }
+            .swallowFailureAndLogError("setIsAvailable", Unit)
+    }
+
     fun setIsTracking(isTracking: String) {
         return isTracking
             .parseToMap()

@@ -91,6 +91,11 @@ public class HyperTrackWebViewJsApi {
     }
 
     @JavascriptInterface
+    public void setIsAvailable(String isAvailable) {
+        WebViewInterfaceWrapper.INSTANCE.setIsAvailable(isAvailable);
+    }
+
+    @JavascriptInterface
     public void setIsTracking(String isTracking) {
         WebViewInterfaceWrapper.INSTANCE.setIsTracking(isTracking);
     }

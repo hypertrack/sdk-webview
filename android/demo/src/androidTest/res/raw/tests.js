@@ -2,24 +2,28 @@ try {
   function testCase(id, call, check) {
     try {
       let result = call();
-      if (result === undefined) {
-        throw Error(
-          JSON.stringify({
-            id: id,
-            type: "failure",
-            message: "result is undefined",
-          })
-        );
-      }
-      console.log(JSON.stringify(result));
-      if (check != undefined && check(result) !== true) {
-        throw Error(
-          JSON.stringify({
-            id: id,
-            type: "failure",
-            message: JSON.stringify(result),
-          })
-        );
+      if (check != undefined) {
+        if (result === undefined) {
+          throw Error(
+            JSON.stringify({
+              id: id,
+              type: "failure",
+              message: "result is undefined",
+            })
+          );
+        } else if (check(result) !== true) {
+          throw Error(
+            JSON.stringify({
+              id: id,
+              type: "failure",
+              message: JSON.stringify({
+                check: check.toString(),
+                error: "Invalid result",
+                result: result,
+              }),
+            })
+          );
+        }
       }
     } catch (e) {
       throw Error(
@@ -34,16 +38,195 @@ try {
     return regex.test(uuid);
   }
 
+  let metadata = {
+    metadata_key: Math.random(),
+  };
+  let name = `Test Name ${Math.random()}`;
+  let geotagData = {
+    key: Math.random(),
+  };
+  let expectedLocation = {
+    latitude: 0.0,
+    longitude: 0.0,
+  };
+
+  testCase("setMetadata", function () {
+    HyperTrack.setMetadata(metadata);
+  });
+
+  testCase("setName", function () {
+    HyperTrack.setName(name);
+  });
+
   testCase("getDeviceId", HyperTrack.getDeviceId, function (result) {
     return isValidUUID(result);
   });
 
-  testCase("getIsTracking", HyperTrack.getIsTracking, function (result) {
+  testCase("getIsTracking1", HyperTrack.getIsTracking, function (result) {
     return result === false;
   });
 
-  testCase("getIsAvailable", HyperTrack.getIsAvailable, function (result) {
+  testCase("getIsAvailable1", HyperTrack.getIsAvailable, function (result) {
     return result === false;
+  });
+
+  testCase("getErrorsNotRunning", HyperTrack.getErrors, function (result) {
+    return (
+      JSON.stringify(result) === JSON.stringify(["permissionsLocationDenied"])
+    );
+  });
+
+  testCase(
+    "addGeotagNotRunning",
+    function () {
+      return HyperTrack.addGeotag(geotagData);
+    },
+    function (result) {
+      return (
+        JSON.stringify(result) ===
+        JSON.stringify({
+          type: "failure",
+          value: {
+            type: "notRunning",
+          },
+        })
+      );
+    }
+  );
+
+  testCase(
+    "addGeotagWithExpectedLocationNotRunning",
+    function () {
+      return HyperTrack.addGeotagWithExpectedLocation(
+        geotagData,
+        expectedLocation
+      );
+    },
+    function (result) {
+      return (
+        JSON.stringify(result) ===
+        JSON.stringify({
+          type: "failure",
+          value: {
+            type: "notRunning",
+          },
+        })
+      );
+    }
+  );
+
+  testCase("getLocationNotRunning", HyperTrack.getLocation, function (result) {
+    return (
+      JSON.stringify(result) ===
+      JSON.stringify({
+        type: "failure",
+        value: {
+          type: "notRunning",
+        },
+      })
+    );
+  });
+
+  testCase("getMetadata", HyperTrack.getMetadata, function (result) {
+    return JSON.stringify(result) === JSON.stringify(metadata);
+  });
+
+  testCase("getName", HyperTrack.getName, function (result) {
+    return result === name;
+  });
+
+  testCase("setIsAvailable", function () {
+    HyperTrack.setIsAvailable(true);
+  });
+
+  testCase("getIsAvailable2", HyperTrack.getIsAvailable, function (result) {
+    return result === true;
+  });
+
+  testCase("getIsTracking2", HyperTrack.getIsTracking, function (result) {
+    return result === false;
+  });
+
+  testCase("setIsTracking", function () {
+    HyperTrack.setIsTracking(true);
+  });
+
+  testCase("getIsAvailable3", HyperTrack.getIsAvailable, function (result) {
+    return result === true;
+  });
+
+  testCase("getIsTracking3", HyperTrack.getIsTracking, function (result) {
+    return result === true;
+  });
+
+  HyperTrack.setIsAvailable(false);
+
+  testCase("getIsAvailable4", HyperTrack.getIsAvailable, function (result) {
+    return result === false;
+  });
+
+  testCase("getIsTracking4", HyperTrack.getIsTracking, function (result) {
+    return result === true;
+  });
+
+  testCase("getErrorsOutage", HyperTrack.getErrors, function (result) {
+    return (
+      JSON.stringify(result) === JSON.stringify(["permissionsLocationDenied"])
+    );
+  });
+
+  testCase(
+    "addGeotagOutage",
+    function () {
+      return HyperTrack.addGeotag(geotagData);
+    },
+    function (result) {
+      return (
+        JSON.stringify(result) ===
+        JSON.stringify({
+          type: "failure",
+          value: {
+            type: "errors",
+            value: ["permissionsLocationDenied"],
+          },
+        })
+      );
+    }
+  );
+
+  testCase(
+    "addGeotagWithExpectedLocationOutage",
+    function () {
+      return HyperTrack.addGeotagWithExpectedLocation(
+        geotagData,
+        expectedLocation
+      );
+    },
+    function (result) {
+      return (
+        JSON.stringify(result) ===
+        JSON.stringify({
+          type: "failure",
+          value: {
+            type: "errors",
+            value: ["permissionsLocationDenied"],
+          },
+        })
+      );
+    }
+  );
+
+  testCase("getLocationOutage", HyperTrack.getLocation, function (result) {
+    return (
+      JSON.stringify(result) ===
+      JSON.stringify({
+        type: "failure",
+        value: {
+          type: "errors",
+          value: ["permissionsLocationDenied"],
+        },
+      })
+    );
   });
 
   TestInterface.callbackCall(JSON.stringify({ type: "success" }));

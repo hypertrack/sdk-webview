@@ -117,7 +117,6 @@ const HyperTrack = (function () {
 })();
 /** @ignore */
 function deserializeHyperTrackErrors(errors) {
-    console.log(JSON.stringify(errors));
     let res = errors.map((error) => {
         if (error.type != "error") {
             throw new Error("Invalid error type");

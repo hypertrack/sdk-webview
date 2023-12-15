@@ -105,7 +105,6 @@ function openAppSettings() {
 
 function requestLocationPermission() {
   try {
-    console.log(HyperTrack.requestLocationPermission);
     HyperTrack.requestLocationPermission();
   } catch (e) {
     alert(e);
