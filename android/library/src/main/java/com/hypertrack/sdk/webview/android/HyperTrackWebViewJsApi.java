@@ -35,6 +35,11 @@ public class HyperTrackWebViewJsApi {
     }
 
     @JavascriptInterface
+    public void cancelLocate() {
+        wrapper.cancelLocate();
+    }
+
+    @JavascriptInterface
     public String getDeviceId() {
         return wrapper.getDeviceId();
     }
@@ -115,8 +120,42 @@ public class HyperTrackWebViewJsApi {
     }
 
     @JavascriptInterface
+    public void subscribeToErrors() {
+        wrapper.subscribeToErrors();
+    }
+
+    @JavascriptInterface
+    public void subscribeToIsAvailable() {
+        wrapper.subscribeToIsAvailable();
+    }
+
+    @JavascriptInterface
+    public void subscribeToIsTracking() {
+        wrapper.subscribeToIsTracking();
+    }
+
+    @JavascriptInterface
     public void subscribeToLocation() {
         wrapper.subscribeToLocation();
     }
-    
+
+    @JavascriptInterface
+    public void unsubscribeFromErrors() {
+        wrapper.unsubscribeFromErrors();
+    }
+
+    @JavascriptInterface
+    public void unsubscribeFromIsAvailable() {
+        wrapper.unsubscribeFromIsAvailable();
+    }
+
+    @JavascriptInterface
+    public void unsubscribeFromIsTracking() {
+        wrapper.unsubscribeFromIsTracking();
+    }
+
+    @JavascriptInterface
+    public void unsubscribeFromLocation() {
+        wrapper.unsubscribeFromLocation();
+    }
 }

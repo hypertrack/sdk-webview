@@ -4,8 +4,11 @@ const HYPERTRACK_EVENT_IS_AVAILABLE = "isAvailable";
 const HYPERTRACK_EVENT_IS_TRACKING = "isTracking";
 const HYPERTRACK_EVENT_LOCATE = "locate";
 const HYPERTRACK_EVENT_LOCATION = "location";
-let hyperTrackLocateSubscription;
-let hyperTrackLocationSubscription;
+let hyperTrackErrorsListener;
+let hyperTrackIsAvailableListener;
+let hyperTrackIsTrackingListener;
+let hyperTrackLocationListener;
+let hyperTrackLocateListener;
 let hyperTrackInstance = {
     addGeotag(data) {
         return hyperTrackDeserializeLocationResponse(JSON.parse(HyperTrackWebViewInterface.addGeotag(JSON.stringify({
@@ -42,19 +45,15 @@ let hyperTrackInstance = {
     getName: function () {
         return hyperTrackDeserializeName(JSON.parse(HyperTrackWebViewInterface.getName()));
     },
-    locate: function () {
+    locate: function (callback) {
+        hyperTrackLocateListener = callback;
+        HyperTrackWebViewInterface.locate();
         return {
-            cancel: () => { },
+            cancel: () => {
+                HyperTrackWebViewInterface.cancelLocate();
+                hyperTrackLocateListener = undefined;
+            },
         };
-        // locateSubscription?.remove();
-        // locateSubscription = EventEmitter.addListener(
-        //   EVENT_LOCATE,
-        //   (location: Result<LocationInternal, HyperTrackErrorInternal[]>) => {
-        //     callback(deserializeLocateResponse(location));
-        //   }
-        // );
-        // HyperTrackWebViewInterface.locate();
-        // return locateSubscription;
     },
     openAppSettings: function () {
         HyperTrackWebViewInterface.openAppSettings();
@@ -81,6 +80,9 @@ let hyperTrackInstance = {
         }));
     },
     setMetadata: function (metadata) {
+        if (!metadata) {
+            throw new Error("You should provide a JSON-compatible object as metadata param");
+        }
         HyperTrackWebViewInterface.setMetadata(JSON.stringify({
             type: "metadata",
             value: metadata,
@@ -93,26 +95,41 @@ let hyperTrackInstance = {
         }));
     },
     subscribeToErrors: function (listener) {
+        hyperTrackErrorsListener = listener;
+        HyperTrackWebViewInterface.subscribeToErrors();
         return {
-            cancel: () => { },
+            cancel: () => {
+                hyperTrackErrorsListener = undefined;
+                HyperTrackWebViewInterface.unsubscribeFromErrors();
+            },
         };
     },
     subscribeToIsAvailable: function (listener) {
+        hyperTrackIsAvailableListener = listener;
+        HyperTrackWebViewInterface.subscribeToIsAvailable();
         return {
-            cancel: () => { },
+            cancel: () => {
+                hyperTrackIsAvailableListener = undefined;
+                HyperTrackWebViewInterface.unsubscribeFromIsAvailable();
+            },
         };
     },
     subscribeToIsTracking: function (listener) {
+        hyperTrackIsTrackingListener = listener;
+        HyperTrackWebViewInterface.subscribeToIsTracking();
         return {
-            cancel: () => { },
+            cancel: () => {
+                hyperTrackIsTrackingListener = undefined;
+                HyperTrackWebViewInterface.unsubscribeFromIsTracking();
+            },
         };
     },
     subscribeToLocation: function (listener) {
-        hyperTrackLocationSubscription = listener;
+        hyperTrackLocationListener = listener;
         HyperTrackWebViewInterface.subscribeToLocation();
         return {
             cancel: () => {
-                hyperTrackLocationSubscription = undefined;
+                hyperTrackLocationListener = undefined;
                 HyperTrackWebViewInterface.unsubscribeFromLocation();
             },
         };
@@ -120,19 +137,30 @@ let hyperTrackInstance = {
 };
 let hyperTrackEventReceiver = {
     dispatchEvent: function (event) {
-        console.log("dispatchEvent", JSON.stringify(event));
         switch (event.name) {
             case HYPERTRACK_EVENT_ERRORS:
+                if (hyperTrackErrorsListener) {
+                    hyperTrackErrorsListener(hyperTrackDeserializeHyperTrackErrors(event.data.errors));
+                }
                 break;
             case HYPERTRACK_EVENT_IS_AVAILABLE:
+                if (hyperTrackIsAvailableListener) {
+                    hyperTrackIsAvailableListener(event.data.value);
+                }
                 break;
             case HYPERTRACK_EVENT_IS_TRACKING:
+                if (hyperTrackIsTrackingListener) {
+                    hyperTrackIsTrackingListener(event.data.value);
+                }
                 break;
             case HYPERTRACK_EVENT_LOCATE:
+                if (hyperTrackLocateListener) {
+                    hyperTrackLocateListener(hyperTrackDeserializeLocateResponse(event.data));
+                }
                 break;
             case HYPERTRACK_EVENT_LOCATION:
-                if (hyperTrackLocationSubscription) {
-                    hyperTrackLocationSubscription(hyperTrackDeserializeLocationResponse(event.data));
+                if (hyperTrackLocationListener) {
+                    hyperTrackLocationListener(hyperTrackDeserializeLocationResponse(event.data));
                 }
                 break;
         }

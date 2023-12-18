@@ -8,9 +8,16 @@ import android.util.Log
 import android.provider.Settings
 import android.webkit.WebView
 import com.hypertrack.sdk.android.HyperTrack
+import com.hypertrack.sdk.android.HyperTrack.errors
 import com.hypertrack.sdk.webview.android.common.Failure
 import com.hypertrack.sdk.webview.android.common.HyperTrackSdkWrapper
+import com.hypertrack.sdk.webview.android.common.Serialization.serializeErrors
+import com.hypertrack.sdk.webview.android.common.Serialization.serializeIsAvailable
+import com.hypertrack.sdk.webview.android.common.Serialization.serializeIsTracking
+import com.hypertrack.sdk.webview.android.common.Serialization.serializeLocateResult
+import com.hypertrack.sdk.webview.android.common.Serialization.serializeLocationErrorFailure
 import com.hypertrack.sdk.webview.android.common.Serialization.serializeLocationResult
+import com.hypertrack.sdk.webview.android.common.Serialization.serializeLocationSuccess
 import com.hypertrack.sdk.webview.android.common.Serialized
 import com.hypertrack.sdk.webview.android.common.Success
 import com.hypertrack.sdk.webview.android.common.WrapperResult
@@ -22,12 +29,49 @@ class WebViewInterfaceWrapper(
     private val activity: Activity,
     private val webView: WebView
 ) {
-
-    private val locationSubscription: HyperTrack.Cancellable
-
+    private var errorSubscriptionEnabled: Boolean = false
+    private var isAvailableSubscriptionEnabled: Boolean = false
+    private var isTrackingSubscriptionEnabled: Boolean = false
     private var locationSubscriptionEnabled: Boolean = false
 
+    private val errorSubscription: HyperTrack.Cancellable
+    private val isAvailableSubscription: HyperTrack.Cancellable
+    private val isTrackingSubscription: HyperTrack.Cancellable
+    private val locationSubscription: HyperTrack.Cancellable
+
+    private var locateSubscription: HyperTrack.Cancellable? = null
+
     init {
+        errorSubscription = HyperTrack.subscribeToErrors {
+            WrapperResult
+                .tryAsResult {
+                    if (errorSubscriptionEnabled) {
+                        sendEvent(EVENT_ERROR, serializeErrorsToObject(serializeErrors(it)))
+                    }
+                }
+                .crashOnFailure()
+        }
+
+        isAvailableSubscription = HyperTrack.subscribeToIsAvailable {
+            WrapperResult
+                .tryAsResult {
+                    if (isAvailableSubscriptionEnabled) {
+                        sendEvent(EVENT_IS_AVAILABLE, serializeIsAvailable(it))
+                    }
+                }
+                .crashOnFailure()
+        }
+
+        isTrackingSubscription = HyperTrack.subscribeToIsTracking {
+            WrapperResult
+                .tryAsResult {
+                    if (isTrackingSubscriptionEnabled) {
+                        sendEvent(EVENT_IS_TRACKING, serializeIsTracking(it))
+                    }
+                }
+                .crashOnFailure()
+        }
+
         locationSubscription = HyperTrack.subscribeToLocation {
             WrapperResult
                 .tryAsResult {
@@ -59,6 +103,15 @@ class WebViewInterfaceWrapper(
                 it.toJSONObject().toString()
             }
             .crashOnFailure()
+    }
+
+    fun cancelLocate() {
+        WrapperResult
+            .tryAsResult {
+                locateSubscription?.cancel()
+            }
+            .crashOnFailure()
+
     }
 
     fun getDeviceId(): String {
@@ -125,7 +178,15 @@ class WebViewInterfaceWrapper(
     }
 
     fun locate() {
-
+        locateSubscription?.cancel()
+        locateSubscription = HyperTrack
+            .locate {
+                WrapperResult
+                    .tryAsResult {
+                        sendEvent(EVENT_LOCATE, serializeLocateResult(it))
+                    }
+                    .crashOnFailure()
+            }
     }
 
     fun openAppSettings() {
@@ -221,11 +282,70 @@ class WebViewInterfaceWrapper(
             .crashOnFailure()
     }
 
+    fun subscribeToErrors() {
+        WrapperResult
+            .tryAsResult {
+                errorSubscriptionEnabled = true
+                sendEvent(EVENT_ERROR, serializeErrorsToObject(serializeErrors(errors)))
+            }
+            .crashOnFailure()
+    }
+
+    fun subscribeToIsAvailable() {
+        WrapperResult
+            .tryAsResult {
+                isAvailableSubscriptionEnabled = true
+                sendEvent(EVENT_IS_AVAILABLE, serializeIsAvailable(HyperTrack.isAvailable))
+            }
+            .crashOnFailure()
+    }
+
+    fun subscribeToIsTracking() {
+        WrapperResult
+            .tryAsResult {
+                isTrackingSubscriptionEnabled = true
+                sendEvent(EVENT_IS_TRACKING, serializeIsTracking(HyperTrack.isTracking))
+            }
+            .crashOnFailure()
+    }
+
     fun subscribeToLocation() {
         WrapperResult
             .tryAsResult {
                 locationSubscriptionEnabled = true
                 sendEvent(EVENT_LOCATION, serializeLocationResult(HyperTrack.location))
+            }
+            .crashOnFailure()
+    }
+
+    fun unsubscribeFromErrors() {
+        WrapperResult
+            .tryAsResult {
+                errorSubscriptionEnabled = false
+            }
+            .crashOnFailure()
+    }
+
+    fun unsubscribeFromIsAvailable() {
+        WrapperResult
+            .tryAsResult {
+                isAvailableSubscriptionEnabled = false
+            }
+            .crashOnFailure()
+    }
+
+    fun unsubscribeFromIsTracking() {
+        WrapperResult
+            .tryAsResult {
+                isTrackingSubscriptionEnabled = false
+            }
+            .crashOnFailure()
+    }
+
+    fun unsubscribeFromLocation() {
+        WrapperResult
+            .tryAsResult {
+                locationSubscriptionEnabled = false
             }
             .crashOnFailure()
     }
@@ -264,10 +384,20 @@ class WebViewInterfaceWrapper(
         }
     }
 
+    private fun serializeErrorsToObject(errors: List<Serialized>): Serialized {
+        return mapOf(KEY_ERRORS to errors)
+    }
+
     companion object {
         private const val REQUEST_CODE = 55658769
 
+        private const val EVENT_ERROR = "errors"
+        private const val EVENT_IS_AVAILABLE = "isAvailable"
+        private const val EVENT_IS_TRACKING = "isTracking"
         private const val EVENT_LOCATION = "location"
+        private const val EVENT_LOCATE = "locate"
+
+        private const val KEY_ERRORS = "errors"
     }
 
 }

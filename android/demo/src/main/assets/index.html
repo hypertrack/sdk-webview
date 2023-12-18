@@ -4,40 +4,70 @@
 <body>
     <h1>sdk-webview demo</h1>
     <h4>Device ID:</h4>
-    <p id="device-id"></p>
+    <p id="device-id">no_data</p>
 
     <h4>Location:</h4>
-    <p id="location"></p>
+    <p id="location">no_data</p>
 
-    <button id="test" onclick="startTracking()">Start tracking</button>
-    <br /><br />
-    <button onclick="stopTracking()">Stop tracking</button>
+    <h4>Errors:</h4>
+    <p id="errors">no_data</p>
+
+    <div>
+        <button onclick="onSetIsTrackingClick(true)">Start tracking</button>
+        <div style="display: inline-block;">
+            <div>Is Tracking:</div>
+            <div id="is-tracking">no_data</div>
+        </div>
+        <button onclick="onSetIsTrackingClick(false)">Stop tracking</button>
+    </div>
     <br /><br />
 
-    <button onclick="addGeotag()">Add geotag</button>
+    <div>
+        <button onclick="onSetIsAvailableClick(true)">Set available</button>
+        <div style="display: inline-block;">
+            <div>Is Available:</div>
+            <div id="is-available">no_data</div>
+        </div>
+        <button onclick="onSetIsAvailableClick(false)">Set unavailable</button>
+    </div>
     <br /><br />
-    <button onclick="addGeotagWithExpectedLocation()">Add geotag with expected location</button>
+
+    <button onclick="onAddGeotagClick()">Add geotag</button>
     <br /><br />
-    <button onclick="getErrors()">Get errors</button>
+    <button onclick="onAddGeotagWithExpectedLocationClick()">Add geotag with expected location</button>
     <br /><br />
-    <button onclick="getLocation()">Get location</button>
+    <button onclick="onLocateClick()">Locate user</button>
     <br /><br />
-    <button onclick="openAppSettings()">Open app settings</button>
+    <button onclick="onCancelLocateClick()">Cancel locate user</button>
     <br /><br />
-    <button onclick="requestLocationPermission()">Request location permission</button>
+    <button onclick="onGetErrorsClick()">Get errors</button>
     <br /><br />
-    <button onclick="requestBackgroundLocationPermission()">Request background location permission
+    <button onclick="onGetIsAvailableClick()">Get is available</button>
+    <br /><br />
+    <button onclick="onGetIsTrackingClick()">Get is tracking</button>
+    <br /><br />
+    <button onclick="onGetLocationClick()">Get location</button>
+    <br /><br />
+    <button onclick="onSetMetadataClick()">Set metadata</button>
+    <br /><br />
+    <button onclick="onSetNameClick()">Set name</button>
+    <br /><br />
+    <button onclick="onGetMetadataClick()">Get metadata</button>
+    <br /><br />
+    <button onclick="onGetNameClick()">Get name</button>
+    <br /><br />
+    <button onclick="onRequestLocationPermissionClick()">Request location permission</button>
+    <br /><br />
+    <button onclick="onRequestBackgroundLocationPermissionClick()">Request background location permission
     </button>
     <br /><br />
-    <button onclick="requestNotificationsPermission()">Request notifications permission</button>
+    <button onclick="onRequestNotificationsPermissionClick()">Request notifications permission</button>
     <br /><br />
-    <button onclick="setMetadata()">Set metadata</button>
+    <button onclick="onOpenAppSettingsClick()">Open app settings</button>
     <br /><br />
-    <button onclick="setName()">Set name</button>
+    <button onclick="onSubscribeToListenersClick()">Subscribe to listeners</button>
     <br /><br />
-    <button onclick="subscribeToListeners()">Subscribe to listeners</button>
-    <br /><br />
-    <button onclick="unsubscribeFromListeners()">Unsubscribe from listeners</button>
+    <button onclick="onUnsubscribeFromListenersClick()">Unsubscribe from listeners</button>
     <br /><br />
 
 
