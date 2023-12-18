@@ -11,11 +11,17 @@ let hyperTrackLocationListener;
 let hyperTrackLocateListener;
 let hyperTrackInstance = {
     addGeotag(data) {
+        if (!data) {
+            throw new Error("You should provide a JSON-compatible object as data param");
+        }
         return hyperTrackDeserializeLocationResponse(JSON.parse(HyperTrackWebViewInterface.addGeotag(JSON.stringify({
             data,
         }))));
     },
     addGeotagWithExpectedLocation(data, expectedLocation) {
+        if (!data || !expectedLocation || !hyperTrackIsLocation(expectedLocation)) {
+            throw new Error("You should provide a JSON-compatible object as data param and expectedLocation should be a valid location object");
+        }
         return hyperTrackDeserializeLocationWithDeviationResponse(JSON.parse(HyperTrackWebViewInterface.addGeotagWithExpectedLocation(JSON.stringify({
             data,
             location: {
@@ -71,12 +77,18 @@ let hyperTrackInstance = {
         HyperTrackWebViewInterface.requestNotificationsPermission();
     },
     setIsAvailable: function (isAvailable) {
+        if (typeof isAvailable !== "boolean") {
+            throw new Error("isAvailable should be a boolean value");
+        }
         HyperTrackWebViewInterface.setIsAvailable(JSON.stringify({
             type: "isAvailable",
             value: isAvailable,
         }));
     },
     setIsTracking: function (isTracking) {
+        if (typeof isTracking !== "boolean") {
+            throw new Error("isTracking should be a boolean value");
+        }
         HyperTrackWebViewInterface.setIsTracking(JSON.stringify({
             type: "isTracking",
             value: isTracking,
@@ -92,6 +104,9 @@ let hyperTrackInstance = {
         }));
     },
     setName: function (name) {
+        if (name != undefined && typeof name !== "string") {
+            throw new Error("You should provide a string as name param");
+        }
         HyperTrackWebViewInterface.setName(JSON.stringify({
             type: "name",
             value: name,
