@@ -15,6 +15,7 @@ interface HyperTrackWebViewInterfaceApi {
   getName(): string;
   locate(): string;
   openAppSettings(): void;
+  openLocationServicesSettings(): void;
   requestBackgroundLocationPermission(): void;
   requestLocationPermission(): void;
   requestNotificationsPermission(): void;
@@ -53,6 +54,7 @@ interface HyperTrackApi {
     ) => void
   ): HyperTrackSubscription;
   openAppSettings(): void;
+  openLocationServicesSettings(): void;
   requestBackgroundLocationPermission(): void;
   requestLocationPermission(): void;
   requestNotificationsPermission(): void;
@@ -234,6 +236,10 @@ let hyperTrackInstance: HyperTrackApi = {
 
   openAppSettings: function (): void {
     HyperTrackWebViewInterface.openAppSettings();
+  },
+
+  openLocationServicesSettings: function (): void {
+    HyperTrackWebViewInterface.openLocationServicesSettings();
   },
 
   requestBackgroundLocationPermission: function (): void {

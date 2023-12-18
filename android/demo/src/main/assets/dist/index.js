@@ -58,6 +58,9 @@ let hyperTrackInstance = {
     openAppSettings: function () {
         HyperTrackWebViewInterface.openAppSettings();
     },
+    openLocationServicesSettings: function () {
+        HyperTrackWebViewInterface.openLocationServicesSettings();
+    },
     requestBackgroundLocationPermission: function () {
         HyperTrackWebViewInterface.requestBackgroundLocationPermission();
     },

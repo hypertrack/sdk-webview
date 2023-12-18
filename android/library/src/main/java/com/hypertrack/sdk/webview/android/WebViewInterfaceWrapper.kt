@@ -202,6 +202,18 @@ class WebViewInterfaceWrapper(
             .crashOnFailure()
     }
 
+    fun openLocationServicesSettings() {
+        return WrapperResult
+            .tryAsResult {
+                activity.startActivity(
+                    Intent(
+                        Settings.ACTION_LOCATION_SOURCE_SETTINGS
+                    )
+                )
+            }
+            .crashOnFailure()
+    }
+
     fun requestLocationPermission() {
         return WrapperResult
             .tryAsResult {

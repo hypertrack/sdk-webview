@@ -135,6 +135,14 @@ function onOpenAppSettingsClick() {
   }
 }
 
+function onOpenLocationServicesSettingsClick() {
+  try {
+    HyperTrack.openLocationServicesSettings();
+  } catch (e) {
+    alert(e);
+  }
+}
+
 function onRequestLocationPermissionClick() {
   try {
     HyperTrack.requestLocationPermission();

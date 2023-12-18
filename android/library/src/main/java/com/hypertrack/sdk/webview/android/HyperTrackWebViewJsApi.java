@@ -85,6 +85,11 @@ public class HyperTrackWebViewJsApi {
     }
 
     @JavascriptInterface
+    public void openLocationServicesSettings() {
+        wrapper.openLocationServicesSettings();
+    }
+
+    @JavascriptInterface
     public void requestLocationPermission() {
         wrapper.requestLocationPermission();
     }
