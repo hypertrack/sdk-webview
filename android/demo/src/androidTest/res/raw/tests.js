@@ -70,12 +70,6 @@ try {
     return result === false;
   });
 
-  testCase("getErrorsNotRunning", HyperTrack.getErrors, function (result) {
-    return (
-      JSON.stringify(result) === JSON.stringify(["permissionsLocationDenied"])
-    );
-  });
-
   testCase(
     "addGeotagNotRunning",
     function () {
@@ -114,6 +108,12 @@ try {
       );
     }
   );
+
+  testCase("getErrorsNotRunning", HyperTrack.getErrors, function (result) {
+    return (
+      JSON.stringify(result) === JSON.stringify(["permissionsLocationDenied"])
+    );
+  });
 
   testCase("getLocationNotRunning", HyperTrack.getLocation, function (result) {
     return (
@@ -169,12 +169,6 @@ try {
     return result === true;
   });
 
-  testCase("getErrorsOutage", HyperTrack.getErrors, function (result) {
-    return (
-      JSON.stringify(result) === JSON.stringify(["permissionsLocationDenied"])
-    );
-  });
-
   testCase(
     "addGeotagOutage",
     function () {
@@ -215,6 +209,12 @@ try {
       );
     }
   );
+
+  testCase("getErrorsOutage", HyperTrack.getErrors, function (result) {
+    return (
+      JSON.stringify(result) === JSON.stringify(["permissionsLocationDenied"])
+    );
+  });
 
   testCase("getLocationOutage", HyperTrack.getLocation, function (result) {
     return (
