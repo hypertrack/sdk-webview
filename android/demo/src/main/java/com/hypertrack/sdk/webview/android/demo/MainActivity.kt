@@ -52,4 +52,19 @@ class MainActivity : AppCompatActivity() {
         webView?.restoreState(savedInstanceState)
     }
 
+    override fun onPause() {
+        super.onPause()
+        webView?.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webView?.onResume()
+    }
+
+    override fun onDestroy() {
+        webView?.destroy()
+        super.onDestroy()
+    }
+
 }

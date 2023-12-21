@@ -189,6 +189,70 @@ class WebViewInterfaceWrapper(
             }
     }
 
+    fun isBackgroundLocationPermissionGranted(): String {
+        return WrapperResult
+            .tryAsResult {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    activity.checkSelfPermission(
+                        android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                } else {
+                    true
+                }
+            }
+            .mapSuccess {
+                serializeIsBackgroundLocationPermissionGranted(it).toJSONObject().toString()
+            }
+            .crashOnFailure()
+    }
+
+    fun isLocationPermissionGranted(): String {
+        return WrapperResult
+            .tryAsResult {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    activity.checkSelfPermission(
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                } else {
+                    true
+                }
+            }
+            .mapSuccess {
+                serializeIsLocationPermissionGranted(it).toJSONObject().toString()
+            }
+            .crashOnFailure()
+    }
+
+    fun isLocationServicesEnabled(): String {
+        return WrapperResult
+            .tryAsResult {
+                val locationManager =
+                    activity.getSystemService(android.content.Context.LOCATION_SERVICE) as android.location.LocationManager
+                locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
+            }
+            .mapSuccess {
+                serializeIsLocationServicesEnabled(it).toJSONObject().toString()
+            }
+            .crashOnFailure()
+    }
+
+    fun isNotificationsPermissionGranted(): String {
+        return WrapperResult
+            .tryAsResult {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    activity.checkSelfPermission(
+                        android.Manifest.permission.POST_NOTIFICATIONS
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                } else {
+                    true
+                }
+            }
+            .mapSuccess {
+                serializeIsNotificationsPermissionGranted(it).toJSONObject().toString()
+            }
+            .crashOnFailure()
+    }
+
     fun openAppSettings() {
         return WrapperResult
             .tryAsResult {

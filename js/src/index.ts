@@ -13,6 +13,10 @@ interface HyperTrackWebViewInterfaceApi {
   getLocation(): string;
   getMetadata(): string;
   getName(): string;
+  isBackgroundLocationPermissionGranted(): string;
+  isLocationPermissionGranted(): string;
+  isLocationServicesEnabled(): string;
+  isNotificationsPermissionGranted(): string;
   locate(): string;
   openAppSettings(): void;
   openLocationServicesSettings(): void;
@@ -48,6 +52,10 @@ interface HyperTrackApi {
   getLocation(): HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>;
   getMetadata(): Object;
   getName(): string;
+  isBackgroundLocationPermissionGranted(): boolean;
+  isLocationPermissionGranted(): boolean;
+  isLocationServicesEnabled(): boolean;
+  isNotificationsPermissionGranted(): boolean;
   locate(
     callback: (
       location: HyperTrackResult<HyperTrackLocation, HyperTrackError[]>
@@ -227,6 +235,46 @@ let hyperTrackInstance: HyperTrackApi = {
     return hyperTrackDeserializeName(
       JSON.parse(HyperTrackWebViewInterface.getName())
     );
+  },
+
+  isBackgroundLocationPermissionGranted: function (): boolean {
+    let result = JSON.parse(
+      HyperTrackWebViewInterface.isBackgroundLocationPermissionGranted()
+    ) as HyperTrackIsBackgroundLocationPermissionGranted;
+    if (result.type != "isBackgroundLocationPermissionGranted") {
+      throw new Error(`Invalid result: ${JSON.stringify(result)}`);
+    }
+    return result.value;
+  },
+
+  isLocationPermissionGranted: function (): boolean {
+    let result = JSON.parse(
+      HyperTrackWebViewInterface.isLocationPermissionGranted()
+    ) as HyperTrackIsLocationPermissionGranted;
+    if (result.type != "isLocationPermissionGranted") {
+      throw new Error(`Invalid result: ${JSON.stringify(result)}`);
+    }
+    return result.value;
+  },
+
+  isLocationServicesEnabled: function (): boolean {
+    let result = JSON.parse(
+      HyperTrackWebViewInterface.isLocationServicesEnabled()
+    ) as HyperTrackIsLocationServicesEnabled;
+    if (result.type != "isLocationServicesEnabled") {
+      throw new Error(`Invalid result: ${JSON.stringify(result)}`);
+    }
+    return result.value;
+  },
+
+  isNotificationsPermissionGranted: function (): boolean {
+    let result = JSON.parse(
+      HyperTrackWebViewInterface.isNotificationsPermissionGranted()
+    ) as HyperTrackIsNotificationsPermissionGranted;
+    if (result.type != "isNotificationsPermissionGranted") {
+      throw new Error(`Invalid result: ${JSON.stringify(result)}`);
+    }
+    return result.value;
   },
 
   locate: function (
@@ -619,6 +667,26 @@ type HyperTrackMetadata = {
 type HyperTrackName = {
   type: "name";
   value: string;
+};
+
+type HyperTrackIsBackgroundLocationPermissionGranted = {
+  type: "isBackgroundLocationPermissionGranted";
+  value: boolean;
+};
+
+type HyperTrackIsLocationPermissionGranted = {
+  type: "isLocationPermissionGranted";
+  value: boolean;
+};
+
+type HyperTrackIsLocationServicesEnabled = {
+  type: "isLocationServicesEnabled";
+  value: boolean;
+};
+
+type HyperTrackIsNotificationsPermissionGranted = {
+  type: "isNotificationsPermissionGranted";
+  value: boolean;
 };
 
 // External

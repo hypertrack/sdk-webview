@@ -1,7 +1,6 @@
 package com.hypertrack.sdk.webview.android;
 
 import android.app.Activity;
-import android.content.Context;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
@@ -77,6 +76,26 @@ public class HyperTrackWebViewJsApi {
     @JavascriptInterface
     public void locate() {
         wrapper.locate();
+    }
+
+    @JavascriptInterface
+    public String isBackgroundLocationPermissionGranted() {
+        return wrapper.isBackgroundLocationPermissionGranted();
+    }
+
+    @JavascriptInterface
+    public String isLocationPermissionGranted() {
+        return wrapper.isLocationPermissionGranted();
+    }
+
+    @JavascriptInterface
+    public String isLocationServicesEnabled() {
+        return wrapper.isLocationServicesEnabled();
+    }
+
+    @JavascriptInterface
+    public String isNotificationsPermissionGranted() {
+        return wrapper.isNotificationsPermissionGranted();
     }
 
     @JavascriptInterface

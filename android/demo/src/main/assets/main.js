@@ -127,6 +127,68 @@ function onLocateClick() {
   }
 }
 
+function onIsBackgroundLocationPermissionGrantedClick() {
+  try {
+    let isBackgroundLocationPermissionGranted =
+      HyperTrack.isBackgroundLocationPermissionGranted();
+    alert(
+      `isBackgroundLocationPermissionGranted: ${JSON.stringify(
+        isBackgroundLocationPermissionGranted,
+        null,
+        2
+      )}`
+    );
+  } catch (e) {
+    alert(e);
+  }
+}
+
+function onIsLocationPermissionGrantedClick() {
+  try {
+    let isLocationPermissionGranted = HyperTrack.isLocationPermissionGranted();
+    alert(
+      `isLocationPermissionGranted: ${JSON.stringify(
+        isLocationPermissionGranted,
+        null,
+        2
+      )}`
+    );
+  } catch (e) {
+    alert(e);
+  }
+}
+
+function onIsLocationServicesEnabledClick() {
+  try {
+    let isLocationServicesEnabled = HyperTrack.isLocationServicesEnabled();
+    alert(
+      `isLocationServicesEnabled: ${JSON.stringify(
+        isLocationServicesEnabled,
+        null,
+        2
+      )}`
+    );
+  } catch (e) {
+    alert(e);
+  }
+}
+
+function onIsNotificationsPermissionGrantedClick() {
+  try {
+    let isNotificationsPermissionGranted =
+      HyperTrack.isNotificationsPermissionGranted();
+    alert(
+      `isNotificationsPermissionGranted: ${JSON.stringify(
+        isNotificationsPermissionGranted,
+        null,
+        2
+      )}`
+    );
+  } catch (e) {
+    alert(e);
+  }
+}
+
 function onOpenAppSettingsClick() {
   try {
     HyperTrack.openAppSettings();

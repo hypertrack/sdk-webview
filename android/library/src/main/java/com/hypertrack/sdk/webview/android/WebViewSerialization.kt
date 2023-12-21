@@ -1,6 +1,7 @@
 package com.hypertrack.sdk.webview.android
 
 import android.provider.Contacts.SettingsColumns.KEY
+import com.hypertrack.sdk.android.HyperTrack
 import com.hypertrack.sdk.android.HyperTrack.metadata
 import com.hypertrack.sdk.android.HyperTrack.name
 import com.hypertrack.sdk.webview.android.common.Failure
@@ -11,47 +12,35 @@ import com.hypertrack.sdk.webview.android.common.WrapperResult
 import org.json.JSONArray
 import org.json.JSONObject
 
-private const val KEY_GEOTAG_DATA = "data"
-private const val KEY_GEOTAG_EXPECTED_LOCATION = "expectedLocation"
-private const val KEY_LOCATION = "location"
 private const val KEY_TYPE = "type"
 private const val KEY_VALUE = "value"
 
-private const val TYPE_DEVICE_ID = "deviceID"
-private const val TYPE_SUCCESS = "success"
-private const val TYPE_FAILURE = "failure"
-private const val TYPE_LOCATION = "location"
-private const val TYPE_METADATA = "metadata"
-private const val TYPE_NAME = "name"
-
-internal fun List<String>.toJsResponse(): String {
-    return this.toJSONArray().toString()
+internal fun serializeIsBackgroundLocationPermissionGranted(value: Boolean): Serialized {
+    return mapOf(
+        KEY_TYPE to "isBackgroundLocationPermissionGranted",
+        KEY_VALUE to value
+    )
 }
 
-internal fun Serialized.toJsResponse(): String {
-    return this.toJSONObject().toString()
+internal fun serializeIsLocationPermissionGranted(value: Boolean): Serialized {
+    return mapOf(
+        KEY_TYPE to "isLocationPermissionGranted",
+        KEY_VALUE to value
+    )
 }
 
-internal fun <T> WrapperResult<T>.toJsResponse(): String {
-    return when (this) {
-        is Success -> {
-            mapOf(
-                KEY_TYPE to TYPE_SUCCESS,
-                KEY_VALUE to this.success
-            ).toJSONObject().toString()
-        }
+internal fun serializeIsLocationServicesEnabled(value: Boolean): Serialized {
+    return mapOf(
+        KEY_TYPE to "isLocationServicesEnabled",
+        KEY_VALUE to value
+    )
+}
 
-        is Failure -> {
-            if (this.failure is Exception) {
-                mapOf(
-                    KEY_TYPE to TYPE_FAILURE,
-                    KEY_VALUE to this.failure.message
-                ).toJSONObject().toString()
-            } else {
-                throw this.failure
-            }
-        }
-    }
+internal fun serializeIsNotificationsPermissionGranted(value: Boolean): Serialized {
+    return mapOf(
+        KEY_TYPE to "isNotificationsPermissionGranted",
+        KEY_VALUE to value
+    )
 }
 
 internal fun String.parseToMap(): WrapperResult<Serialized> {

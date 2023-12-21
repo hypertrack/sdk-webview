@@ -51,6 +51,34 @@ let hyperTrackInstance = {
     getName: function () {
         return hyperTrackDeserializeName(JSON.parse(HyperTrackWebViewInterface.getName()));
     },
+    isBackgroundLocationPermissionGranted: function () {
+        let result = JSON.parse(HyperTrackWebViewInterface.isBackgroundLocationPermissionGranted());
+        if (result.type != "isBackgroundLocationPermissionGranted") {
+            throw new Error(`Invalid result: ${JSON.stringify(result)}`);
+        }
+        return result.value;
+    },
+    isLocationPermissionGranted: function () {
+        let result = JSON.parse(HyperTrackWebViewInterface.isLocationPermissionGranted());
+        if (result.type != "isLocationPermissionGranted") {
+            throw new Error(`Invalid result: ${JSON.stringify(result)}`);
+        }
+        return result.value;
+    },
+    isLocationServicesEnabled: function () {
+        let result = JSON.parse(HyperTrackWebViewInterface.isLocationServicesEnabled());
+        if (result.type != "isLocationServicesEnabled") {
+            throw new Error(`Invalid result: ${JSON.stringify(result)}`);
+        }
+        return result.value;
+    },
+    isNotificationsPermissionGranted: function () {
+        let result = JSON.parse(HyperTrackWebViewInterface.isNotificationsPermissionGranted());
+        if (result.type != "isNotificationsPermissionGranted") {
+            throw new Error(`Invalid result: ${JSON.stringify(result)}`);
+        }
+        return result.value;
+    },
     locate: function (callback) {
         hyperTrackLocateListener = callback;
         HyperTrackWebViewInterface.locate();
