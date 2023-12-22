@@ -2,6 +2,18 @@ window.onerror = function (message, _source, _lineno, _colno, _error) {
   alert(`Error: ${message}\nCheck "chrome://inspect" for details.`);
 };
 
+let dialog = document.getElementById("myDialog");
+let dialogMessage = document.getElementById("dialogMessage");
+let dialogTitle = document.getElementById("dialogTitle");
+let btnPrimary = document.getElementById("btnPrimary");
+let btnSecondary = document.getElementById("btnSecondary");
+
+window.onclick = function (event) {
+  if (event.target == dialog) {
+    hideDialog();
+  }
+};
+
 let errorsSubscription = null;
 let isAvailableSubscription = null;
 let isTrackingSubscription = null;
@@ -324,4 +336,114 @@ function unsubscribeFromListeners() {
     locationSubscription.cancel();
     locationSubscription = null;
   }
+}
+
+function showDialog(title, text, onPrimaryClick, onSecondaryClick) {
+  dialog.style.display = "block";
+  dialogMessage.innerText = text;
+  dialogTitle.innerText = title;
+
+  btnPrimary.onclick = function () {
+    console.log("onPrimaryClick");
+    onPrimaryClick();
+  };
+  btnSecondary.onclick = function () {
+    console.log("onSecondaryClick", onSecondaryClick.toString());
+    onSecondaryClick();
+  };
+}
+
+function hideDialog() {
+  dialog.style.display = "none";
+}
+
+function startPermissionsFlow() {
+  if (!HyperTrack.isLocationPermissionGranted()) {
+    requestForegroundLocation();
+  } else {
+    onForegroundLocationGranted();
+  }
+}
+
+function requestForegroundLocation() {
+  showDialog(
+    "Please grant Location permission",
+    `This app collects activity and location data \n to  manage your work on the move \n even when the app is closed or not in use\n\n
+    We use this data to:\n
+    - Show your movement history\n
+    - Optimize routes\n
+    - Mark places you visit\n
+    - Make expense claims easier\n
+    - Compute daily stats \n\t\t(like total driven distance)`,
+    function () {
+      if (!HyperTrack.isLocationPermissionGranted()) {
+        HyperTrack.requestLocationPermission();
+      } else {
+        hideDialog();
+        onForegroundLocationGranted();
+      }
+    },
+    function () {
+      HyperTrack.openAppSettings();
+    }
+  );
+}
+
+function onForegroundLocationGranted() {
+  if (!HyperTrack.isBackgroundLocationPermissionGranted()) {
+    requestBackgroundLocation();
+  } else {
+    onBackgroundLocationGranted();
+  }
+}
+
+function requestBackgroundLocation() {
+  showDialog(
+    "Allow All the Time Location Access",
+    "The permission is required to automatically start tracking location based on your work schedule (without you having to open app). The app will always show a notification when tracking is active.",
+    function () {
+      if (!HyperTrack.isBackgroundLocationPermissionGranted()) {
+        HyperTrack.requestBackgroundLocationPermission();
+      } else {
+        hideDialog();
+        onBackgroundLocationGranted();
+      }
+    },
+    function () {
+      HyperTrack.openAppSettings();
+    }
+  );
+}
+
+function onBackgroundLocationGranted() {
+  if (!HyperTrack.isNotificationsPermissionGranted()) {
+    requestNotifications();
+  } else {
+    hideDialog();
+    onNotificationsGranted();
+  }
+}
+
+function requestNotifications() {
+  showDialog(
+    "Allow Notifications permission",
+    `The permission is required by Android OS to launch the service to track your
+    location while the app is in the background \n\n
+    Also the app will notify you about tracking status and any tracking issues.`,
+    function () {
+      if (!HyperTrack.isNotificationsPermissionGranted()) {
+        HyperTrack.requestNotificationsPermission();
+      } else {
+        hideDialog();
+        onNotificationsGranted();
+      }
+    },
+    function () {
+      HyperTrack.openAppSettings();
+    }
+  );
+}
+
+function onNotificationsGranted() {
+  alert("All permissions granted");
 }

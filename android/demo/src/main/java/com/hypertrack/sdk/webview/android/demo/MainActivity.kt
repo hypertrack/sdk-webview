@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
             settings.domStorageEnabled = true
             settings.javaScriptCanOpenWindowsAutomatically = true
             webChromeClient = object : WebChromeClient() {
+
 //                override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
 //                    Log.e("HT-DEBUG", consoleMessage?.message() ?: "no data");
 //                    return true
