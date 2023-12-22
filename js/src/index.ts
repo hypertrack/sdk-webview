@@ -40,41 +40,260 @@ interface HyperTrackWebViewInterfaceApi {
 }
 
 interface HyperTrackApi {
+  /**
+   * Adds a new geotag
+   *
+   * @param {Object} data - Geotad data JSON
+   * @returns current location if success or LocationError if failure
+   */
   addGeotag(
     data: Object
   ): HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>;
+
+  /**
+   * Adds a new geotag with expected location
+   *
+   * @param {Object} data - Geotad data JSON
+   * @param {Location} expectedLocation - Expected location
+   * @returns location with deviation if success or LocationError if failure
+   */
   addGeotagWithExpectedLocation(
     data: Object,
     expectedLocation: HyperTrackLocation
   ): HyperTrackResult<HyperTrackLocationWithDeviation, HyperTrackLocationError>;
+
+  /**
+   * Returns a string that is used to uniquely identify the device
+   *
+   * @returns {string} Device ID
+   */
   getDeviceId(): string;
+
+  /**
+   * Returns a list of errors that blocks SDK from tracking
+   *
+   * @returns {HyperTrackError[]} List of errors
+   */
   getErrors(): HyperTrackError[];
+
+  /**
+   * Reflects availability of the device for the Nearby search
+   *
+   * @returns true when is available or false when unavailable
+   */
   getIsAvailable(): boolean;
+
+  /**
+   * Reflects the tracking intent for the device
+   *
+   * @returns {boolean} Whether the user's movement data is getting tracked or not.
+   */
   getIsTracking(): boolean;
+
+  /**
+   * Reflects the current location of the user or an outage reason
+   */
   getLocation(): HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>;
+
+  /**
+   * Gets the metadata that is set for the device
+   *
+   * @returns {Object} Metadata JSON
+   */
   getMetadata(): Object;
+
+  /**
+   * Gets the name that is set for the device
+   *
+   * @returns {string} Device name
+   */
   getName(): string;
+
+  /**
+   * Checks the state of the background location permission.
+   *
+   * @returns {boolean} true if the permission is granted, false otherwise
+   */
   isBackgroundLocationPermissionGranted(): boolean;
+
+  /**
+   * Checks the state of the location permission.
+   *
+   * @returns {boolean} true if the permission is granted, false otherwise
+   */
   isLocationPermissionGranted(): boolean;
+
+  /**
+   * Checks the state of the location services.
+   *
+   * @returns {boolean} true if the location services are enabled, false otherwise
+   */
   isLocationServicesEnabled(): boolean;
+
+  /**
+   * Checks the state of the notifications permission.
+   *
+   * @returns {boolean} true if the permission is granted, false otherwise
+   */
   isNotificationsPermissionGranted(): boolean;
+
+  /**
+   * Requests one-time location update and returns the location once it is available, or error.
+   *
+   * Only one locate subscription can be active at a time. If you re-subscribe, the old EmitterSubscription
+   * will be automaticaly removed.
+   *
+   * This method will start location tracking if called, and will stop it when the location is received or
+   * the subscription is cancelled. If any other tracking intent is present (e.g. isAvailable is set to `true`),
+   * the tracking will not be stopped.
+   *
+   * @param callback
+   * @returns EmitterSubscription
+   * @example
+   * ```js
+   * const subscription = HyperTrack.locate(location => {
+   *  ...
+   * })
+   *
+   * // to unsubscribe
+   * subscription.remove()
+   * ```
+   */
   locate(
     callback: (
       location: HyperTrackResult<HyperTrackLocation, HyperTrackError[]>
     ) => void
   ): HyperTrackSubscription;
+
+  /**
+   * Opens the App settings screen
+   */
   openAppSettings(): void;
+
+  /**
+   * Opens the Location Services settings screen
+   */
   openLocationServicesSettings(): void;
+
+  /**
+   * Requests the background location permission
+   */
   requestBackgroundLocationPermission(): void;
+
+  /**
+   * Requests the location permission
+   */
   requestLocationPermission(): void;
+
+  /**
+   * Requests the notifications permission
+   */
   requestNotificationsPermission(): void;
+
+  /**
+   * Sets the availability of the device for the Nearby search
+   *
+   * @param availability true when is available or false when unavailable
+   */
   setIsAvailable(isAvailable: boolean): void;
+
+  /**
+   * Sets the tracking intent for the device
+   *
+   * @param {boolean} isTracking
+   */
   setIsTracking(isTracking: boolean): void;
+
+  /**
+   * Sets the metadata for the device
+   *
+   * @param {Object} data - Metadata JSON
+   */
   setMetadata(metadata: Object): void;
+
+  /**
+   * Sets the name for the device
+   *
+   * @param {string} name
+   */
   setName(name: string): void;
+
+  /**
+   * Subscribe to tracking errors.
+   * Only one errors subscription can be active at a time. If you re-subscribe, the old subscription will be automaticaly removed.
+   *
+   * @param listener
+   * @returns HyperTrackSubscription
+   * @example
+   * ```js
+   * const subscription = HyperTrack.subscribeToErrors(errors => {
+   *   errors.forEach(error => {
+   *     // ... error
+   *   })
+   * })
+   *
+   * // later, to stop listening
+   * subscription.cancel()
+   * ```
+   */
   subscribeToErrors(listener: (errors: HyperTrackError[]) => void): void;
+
+  /**
+   * Subscribe to availability changes.
+   * Only one isAvailable subscription can be active at a time. If you re-subscribe, the old subscription will be automaticaly removed.
+   *
+   * @param listener
+   * @returns HyperTrackSubscription
+   * @example
+   * ```js
+   * const subscription = HyperTrack.subscribeToIsAvailable(isAvailable => {
+   *   if (isAvailable) {
+   *     // ... ready to go
+   *   }
+   * })
+   *
+   * // later, to stop listening
+   * subscription.cancel()
+   * ```
+   */
   subscribeToIsAvailable(listener: (isAvailable: boolean) => void): void;
+
+  /**
+   * Subscribe to tracking intent changes.
+   * Only one isTracking subscription can be active at a time. If you re-subscribe, the old subscription will be automaticaly removed.
+   *
+   * @param listener
+   * @returns HyperTrackSubscription
+   * @example
+   * ```js
+   * const subscription = HyperTrack.subscribeToIsTracking(isTracking => {
+   *   if (isTracking) {
+   *     // ... ready to go
+   *   }
+   * })
+   *
+   * // later, to stop listening
+   * subscription.cancel()
+   * ```
+   */
   subscribeToIsTracking(listener: (isTracking: boolean) => void): void;
+
+  /**
+   * Subscribe to location changes.
+   * Only one location subscription can be active at a time. If you re-subscribe, the old subscription will be automaticaly removed.
+   *
+   * @param listener
+   * @returns HyperTrackSubscription
+   * @example
+   * ```js
+   * const subscription = HyperTrack.subscribeToLocation(location => {
+   *   ...
+   * })
+   *
+   * // later, to stop listening
+   * subscription.cancel()
+   * ```
+   */
   subscribeToLocation(
     listener: (
       location: HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>
