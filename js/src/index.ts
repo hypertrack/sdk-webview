@@ -1,7 +1,9 @@
+/** @ignore */
 declare var HyperTrackWebViewInterface: HyperTrackWebViewInterfaceApi;
 
 // All names have HyperTrack prefix to avoid name collisions
 
+/** @ignore */
 interface HyperTrackWebViewInterfaceApi {
   addGeotag(geotagData: string): string;
   addGeotagWithExpectedLocation(geotagData: string): string;
@@ -84,10 +86,12 @@ interface HyperTrackSubscription {
   cancel(): void;
 }
 
+/** @ignore */
 interface HyperTrackEventReceiverApi {
   dispatchEvent(event: Object): void;
 }
 
+/** @ignore */
 type HyperTrackEvent =
   | HyperTrackErrorsEvent
   | HyperTrackIsAvailableEvent
@@ -95,26 +99,31 @@ type HyperTrackEvent =
   | HyperTrackLocateEvent
   | HyperTrackLocationEvent;
 
+/** @ignore */
 type HyperTrackErrorsEvent = {
   name: typeof HYPERTRACK_EVENT_ERRORS;
   data: HyperTrackErrorsObject;
 };
 
+/** @ignore */
 type HyperTrackIsAvailableEvent = {
   name: typeof HYPERTRACK_EVENT_IS_AVAILABLE;
   data: HyperTrackIsAvailable;
 };
 
+/** @ignore */
 type HyperTrackIsTrackingEvent = {
   name: typeof HYPERTRACK_EVENT_IS_TRACKING;
   data: HyperTrackIsTracking;
 };
 
+/** @ignore */
 type HyperTrackLocateEvent = {
   name: typeof HYPERTRACK_EVENT_LOCATE;
   data: HyperTrackResult<HyperTrackLocationInternal, HyperTrackErrorInternal[]>;
 };
 
+/** @ignore */
 type HyperTrackLocationEvent = {
   name: typeof HYPERTRACK_EVENT_LOCATION;
   data: HyperTrackResult<
@@ -123,34 +132,46 @@ type HyperTrackLocationEvent = {
   >;
 };
 
+/** @ignore */
 type HyperTrackErrorsObject = {
   errors: HyperTrackErrorInternal[];
 };
 
+/** @ignore */
 const HYPERTRACK_EVENT_ERRORS = "errors";
+/** @ignore */
 const HYPERTRACK_EVENT_IS_AVAILABLE = "isAvailable";
+/** @ignore */
 const HYPERTRACK_EVENT_IS_TRACKING = "isTracking";
+/** @ignore */
 const HYPERTRACK_EVENT_LOCATE = "locate";
+/** @ignore */
 const HYPERTRACK_EVENT_LOCATION = "location";
 
+/** @ignore */
 let hyperTrackErrorsListener: ((errors: HyperTrackError[]) => void) | undefined;
 
+/** @ignore */
 let hyperTrackIsAvailableListener: ((isAvailable: boolean) => void) | undefined;
 
+/** @ignore */
 let hyperTrackIsTrackingListener: ((isTracking: boolean) => void) | undefined;
 
+/** @ignore */
 let hyperTrackLocationListener:
   | ((
       location: HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>
     ) => void)
   | undefined;
 
+/** @ignore */
 let hyperTrackLocateListener:
   | ((
       location: HyperTrackResult<HyperTrackLocation, HyperTrackError[]>
     ) => void)
   | undefined;
 
+/** @ignore */
 let hyperTrackInstance: HyperTrackApi = {
   addGeotag(
     data: Object
@@ -417,6 +438,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 };
 
+/** @ignore */
 let hyperTrackEventReceiver: HyperTrackEventReceiverApi = {
   dispatchEvent: function (event: HyperTrackEvent): void {
     switch (event.name) {
@@ -461,10 +483,12 @@ let hyperTrackEventReceiver: HyperTrackEventReceiverApi = {
   },
 };
 
+/** @ignore */
 const HyperTrack = (function () {
   return hyperTrackInstance;
 })();
 
+/** @ignore */
 const HyperTrackEventReceiver = (function () {
   return hyperTrackEventReceiver;
 })();
@@ -602,47 +626,59 @@ function hyperTrackIsLocation(
 
 // Internal
 
+/** @ignore */
 type HyperTrackDeviceId = {
   type: "deviceID";
   value: string;
 };
 
+/** @ignore */
 type HyperTrackGeotagData = {
   data: Object;
   expectedLocation?: HyperTrackLocationInternal;
 };
 
+/** @ignore */
 type HyperTrackErrorInternal = {
   type: "error";
   value: string;
 };
 
+/** @ignore */
 type HyperTrackIsAvailable = {
   type: "isAvailable";
   value: boolean;
 };
 
+/** @ignore */
 type HyperTrackIsTracking = {
   type: "isTracking";
   value: boolean;
 };
 
+/** @ignore */
 type HyperTrackNotRunning = {
   type: "notRunning";
 };
+
+/** @ignore */
 type HyperTrackStarting = {
   type: "starting";
 };
+
+/** @ignore */
 type HyperTrackErrorsInternal = {
   type: "errors";
   value: HyperTrackErrorInternal[];
 };
 
+/** @ignore */
 type HyperTrackLocationErrorInternal =
   | HyperTrackNotRunning
   | HyperTrackStarting
   | HyperTrackErrorsInternal;
 
+/** @ignore */
 type HyperTrackLocationInternal = {
   type: "location";
   value: {
@@ -651,6 +687,7 @@ type HyperTrackLocationInternal = {
   };
 };
 
+/** @ignore */
 type HyperTrackLocationWithDeviationInternal = {
   type: "locationWithDeviation";
   value: {
@@ -659,31 +696,37 @@ type HyperTrackLocationWithDeviationInternal = {
   };
 };
 
+/** @ignore */
 type HyperTrackMetadata = {
   type: "metadata";
   value: Object;
 };
 
+/** @ignore */
 type HyperTrackName = {
   type: "name";
   value: string;
 };
 
+/** @ignore */
 type HyperTrackIsBackgroundLocationPermissionGranted = {
   type: "isBackgroundLocationPermissionGranted";
   value: boolean;
 };
 
+/** @ignore */
 type HyperTrackIsLocationPermissionGranted = {
   type: "isLocationPermissionGranted";
   value: boolean;
 };
 
+/** @ignore */
 type HyperTrackIsLocationServicesEnabled = {
   type: "isLocationServicesEnabled";
   value: boolean;
 };
 
+/** @ignore */
 type HyperTrackIsNotificationsPermissionGranted = {
   type: "isNotificationsPermissionGranted";
   value: boolean;
