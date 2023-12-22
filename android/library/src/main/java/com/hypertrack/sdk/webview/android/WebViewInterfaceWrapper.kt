@@ -315,7 +315,7 @@ class WebViewInterfaceWrapper(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     activity.requestPermissions(
                         listOf(
-                            android.Manifest.permission.ACCESS_NOTIFICATION_POLICY
+                            android.Manifest.permission.POST_NOTIFICATIONS
                         ).toTypedArray(),
                         REQUEST_CODE
                     )
