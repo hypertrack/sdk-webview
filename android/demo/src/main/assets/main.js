@@ -445,5 +445,5 @@ function requestNotifications() {
 }
 
 function onNotificationsGranted() {
-  alert("All permissions granted");
+  alert("All permissions are granted");
 }

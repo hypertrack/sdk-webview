@@ -120,7 +120,7 @@ public class HyperTrackWebViewJsApi {
 
     @JavascriptInterface
     public void requestNotificationsPermission() {
-        wrapper.requestNotificationPermission();
+        wrapper.requestNotificationsPermission();
     }
 
     @JavascriptInterface

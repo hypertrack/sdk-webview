@@ -309,7 +309,7 @@ class WebViewInterfaceWrapper(
             .crashOnFailure()
     }
 
-    fun requestNotificationPermission() {
+    fun requestNotificationsPermission() {
         return WrapperResult
             .tryAsResult {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
