@@ -1,3 +1,4 @@
+alias b := build
 alias ca := copy-js-to-android
 
 build:

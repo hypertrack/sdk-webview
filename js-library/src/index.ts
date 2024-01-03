@@ -1,5 +1,6 @@
 /** @ignore */
 declare var HyperTrackWebViewInterface: HyperTrackWebViewInterfaceApi;
+export { HyperTrack };
 
 // All names have HyperTrack prefix to avoid name collisions
 
@@ -711,6 +712,9 @@ const HyperTrack = (function () {
 const HyperTrackEventReceiver = (function () {
   return hyperTrackEventReceiver;
 })();
+
+declare var window: any;
+window.HyperTrackEventReceiver = HyperTrackEventReceiver;
 
 /** @ignore */
 function hyperTrackDeserializeHyperTrackErrors(

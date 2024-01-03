@@ -1,4 +1,11 @@
 alias b := build
+alias u := update-local-wrapper
 
 build:
-    bun run build
+    just -f ../js-library/justfile build
+    just update-local-wrapper
+    bun build src/index.ts --outdir dist
+
+update-local-wrapper:
+    bun remove hypertrack-sdk-webview
+    bun add ../js-library

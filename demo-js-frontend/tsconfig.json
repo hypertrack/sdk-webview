@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist", // Redirect output structure to the directory
     "sourceMap": true, // Enables source map support for debugging
-    "module": "amd", // Specify module code generation method
+    "module": "NodeNext", // Specify module code generation method
     "target": "es2015", // Specify ECMAScript target version
     "allowJs": true, // Allow JavaScript files to be compiled
     "lib": ["es2015", "dom"], // Specify a list of library files to be included in the compilation

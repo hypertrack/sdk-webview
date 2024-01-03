@@ -448,13 +448,17 @@ class WebViewInterfaceWrapper(
         activity.runOnUiThread {
             webView.evaluateJavascript(
                 """
-                HyperTrackEventReceiver.dispatchEvent(
-                    {
-                        name: "$name",
-                        data: ${data.toJSONObject()}
+                    try {
+                        HyperTrackEventReceiver.dispatchEvent(
+                            {
+                                name: "$name",
+                                data: ${data.toJSONObject()}
+                            }
+                        )
+                    } catch (e) {
+                        console.error(e)
                     }
-                )
-            """.trimIndent(),
+                """.trimIndent(),
                 null
             )
         }

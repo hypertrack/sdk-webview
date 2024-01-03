@@ -1,22 +1,31 @@
+import { HyperTrack, HyperTrackEventReceiver } from "hypertrack-sdk-webview";
+export { HyperTrack, HyperTrackEventReceiver };
+
 declare var window: any;
 declare var document: any;
 declare var HyperTrack: any;
-declare var HyperTrackWebViewInterface: any;
+declare var HyperTrackEventReceiver: any;
+
+// declare var HyperTrackWebViewInterface: any;
+
+// console.log(`HyperTrackWebViewInterface: ${HyperTrackWebViewInterface}`);
+console.log(`HyperTrack: ${HyperTrack}`);
+console.log(`HyperTrackEventReceiver: ${HyperTrackEventReceiver}`);
 
 window.onerror = function (message, _source, _lineno, _colno, _error) {
   alert(`Error: ${message}\n`);
 };
 
-if (!HyperTrackWebViewInterface) {
-  alert(
-    "HyperTrackWebViewInterface is not defined. Please check if SDK is properly integrated."
-  );
-}
-if (!HyperTrack) {
-  alert(
-    "HyperTrack is not defined. Please check if SDK is properly integrated."
-  );
-}
+// if (!HyperTrackWebViewInterface) {
+//   alert(
+//     "HyperTrackWebViewInterface is not defined. Please check if SDK is properly integrated."
+//   );
+// }
+// if (!HyperTrack) {
+//   alert(
+//     "HyperTrack is not defined. Please check if SDK is properly integrated."
+//   );
+// }
 
 let dialog = document.getElementById("myDialog");
 let dialogMessage = document.getElementById("dialogMessage");
@@ -45,7 +54,7 @@ try {
   alert(e);
 }
 
-function onAddGeotagClick() {
+window.onAddGeotagClick = function () {
   try {
     let addGeotagResult = HyperTrack.addGeotag({
       test_object: {
@@ -56,9 +65,9 @@ function onAddGeotagClick() {
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onAddGeotagWithExpectedLocationClick() {
+window.onAddGeotagWithExpectedLocationClick = function () {
   try {
     let addGeotagWithExpectedLocationResult =
       HyperTrack.addGeotagWithExpectedLocation(
@@ -77,9 +86,9 @@ function onAddGeotagWithExpectedLocationClick() {
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onCancelLocateClick() {
+window.onCancelLocateClick = function () {
   try {
     if (locateSubscription) {
       locateSubscription.cancel();
@@ -88,63 +97,63 @@ function onCancelLocateClick() {
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onGetErrorsClick() {
+window.onGetErrorsClick = function () {
   try {
     let errors = HyperTrack.getErrors();
     alert(JSON.stringify(errors, null, 2));
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onGetIsAvailableClick() {
+window.onGetIsAvailableClick = function () {
   try {
     let isAvailable = HyperTrack.getIsAvailable();
     alert(JSON.stringify(isAvailable, null, 2));
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onGetIsTrackingClick() {
+window.onGetIsTrackingClick = function () {
   try {
     let isTracking = HyperTrack.getIsTracking();
     alert(JSON.stringify(isTracking, null, 2));
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onGetLocationClick() {
+window.onGetLocationClick = function () {
   try {
     let location = HyperTrack.getLocation();
     alert(JSON.stringify(location, null, 2));
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onGetMetadataClick() {
+window.onGetMetadataClick = function () {
   try {
     let metadata = HyperTrack.getMetadata();
     alert(JSON.stringify(metadata, null, 2));
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onGetNameClick() {
+window.onGetNameClick = function () {
   try {
     let name = HyperTrack.getName();
     alert(JSON.stringify(name, null, 2));
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onLocateClick() {
+window.onLocateClick = function () {
   try {
     locateSubscription = HyperTrack.locate(function (locationResult) {
       console.log("locate listener", JSON.stringify(locationResult, null, 2));
@@ -153,9 +162,9 @@ function onLocateClick() {
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onIsBackgroundLocationPermissionGrantedClick() {
+window.onIsBackgroundLocationPermissionGrantedClick = function () {
   try {
     let isBackgroundLocationPermissionGranted =
       HyperTrack.isBackgroundLocationPermissionGranted();
@@ -169,9 +178,9 @@ function onIsBackgroundLocationPermissionGrantedClick() {
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onIsLocationPermissionGrantedClick() {
+window.onIsLocationPermissionGrantedClick = function () {
   try {
     let isLocationPermissionGranted = HyperTrack.isLocationPermissionGranted();
     alert(
@@ -184,9 +193,9 @@ function onIsLocationPermissionGrantedClick() {
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onIsLocationServicesEnabledClick() {
+window.onIsLocationServicesEnabledClick = function () {
   try {
     let isLocationServicesEnabled = HyperTrack.isLocationServicesEnabled();
     alert(
@@ -199,9 +208,9 @@ function onIsLocationServicesEnabledClick() {
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onIsNotificationsPermissionGrantedClick() {
+window.onIsNotificationsPermissionGrantedClick = function () {
   try {
     let isNotificationsPermissionGranted =
       HyperTrack.isNotificationsPermissionGranted();
@@ -215,65 +224,65 @@ function onIsNotificationsPermissionGrantedClick() {
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onOpenAppSettingsClick() {
+window.onOpenAppSettingsClick = function () {
   try {
     HyperTrack.openAppSettings();
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onOpenLocationServicesSettingsClick() {
+window.onOpenLocationServicesSettingsClick = function () {
   try {
     HyperTrack.openLocationServicesSettings();
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onRequestLocationPermissionClick() {
+window.onRequestLocationPermissionClick = function () {
   try {
     HyperTrack.requestLocationPermission();
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onRequestBackgroundLocationPermissionClick() {
+window.onRequestBackgroundLocationPermissionClick = function () {
   try {
     HyperTrack.requestBackgroundLocationPermission();
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onRequestNotificationsPermissionClick() {
+window.onRequestNotificationsPermissionClick = function () {
   try {
     HyperTrack.requestNotificationsPermission();
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onSetIsAvailableClick(value) {
+window.onSetIsAvailableClick = function (value) {
   try {
     HyperTrack.setIsAvailable(value);
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onSetIsTrackingClick(value) {
+window.onSetIsTrackingClick = function (value) {
   try {
     HyperTrack.setIsTracking(value);
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onSetMetadataClick() {
+window.onSetMetadataClick = function () {
   try {
     let metadata = {
       metadata_field: "test_metadata_value",
@@ -283,9 +292,9 @@ function onSetMetadataClick() {
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onSetNameClick() {
+window.onSetNameClick = function () {
   try {
     let name = "test_name";
     HyperTrack.setName(name);
@@ -293,15 +302,15 @@ function onSetNameClick() {
   } catch (e) {
     alert(e);
   }
-}
+};
 
-function onSubscribeToListenersClick() {
+window.onSubscribeToListenersClick = function () {
   subscribeToListeners();
-}
+};
 
-function onUnsubscribeFromListenersClick() {
+window.onUnsubscribeFromListenersClick = function () {
   unsubscribeFromListeners();
-}
+};
 
 function subscribeToListeners() {
   errorsSubscription = HyperTrack.subscribeToErrors(function (errors) {
