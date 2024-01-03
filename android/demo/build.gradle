@@ -7,6 +7,9 @@ android {
     namespace 'com.hypertrack.sdk.webview.android.demo'
     compileSdk 34
 
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId "com.hypertrack.sdk.webview.android.demo"
         minSdk 23
@@ -18,6 +21,16 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        // get local properties
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+        def server_url = properties.getProperty('server_url')
+        if (server_url == null) {
+            server_url = "http://10.0.2.2:3000"
+        }
+        buildConfigField("String", "SERVER_URL", "\"${server_url}\"")
     }
 
     buildTypes {

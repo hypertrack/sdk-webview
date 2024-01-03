@@ -11,6 +11,7 @@ import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
+import com.hypertrack.sdk.webview.android.demo.BuildConfig
 import com.hypertrack.sdk.webview.android.HyperTrackWebViewJsApi
 
 class MainActivity : AppCompatActivity() {
@@ -37,20 +38,20 @@ class MainActivity : AppCompatActivity() {
             settings.allowContentAccess = false
 
             webViewClient = object : WebViewClientCompat() {
-                override fun shouldInterceptRequest(
-                    view: WebView?,
-                    request: WebResourceRequest
-                ): WebResourceResponse? {
-                    return assetLoader.shouldInterceptRequest(request.url)
-                }
-
-                @Suppress("OVERRIDE_DEPRECATION")
-                override fun shouldInterceptRequest(
-                    view: WebView?,
-                    url: String?
-                ): WebResourceResponse? {
-                    return assetLoader.shouldInterceptRequest(Uri.parse(url))
-                }
+//                override fun shouldInterceptRequest(
+//                    view: WebView?,
+//                    request: WebResourceRequest
+//                ): WebResourceResponse? {
+//                    return assetLoader.shouldInterceptRequest(request.url)
+//                }
+//
+//                @Suppress("OVERRIDE_DEPRECATION")
+//                override fun shouldInterceptRequest(
+//                    view: WebView?,
+//                    url: String?
+//                ): WebResourceResponse? {
+//                    return assetLoader.shouldInterceptRequest(Uri.parse(url))
+//                }
             }
 
             webChromeClient = object : WebChromeClient() {
@@ -68,11 +69,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (savedInstanceState == null) {
-            // Assets are hosted under http(s)://appassets.androidplatform.net/assets/... .
-            // If the application's assets are in the "main/assets" folder this will read the file
-            // from "main/assets/www/index.html" and load it as if it were hosted on:
-            // https://appassets.androidplatform.net/assets/www/index.html
-            webView?.loadUrl("https://appassets.androidplatform.net/assets/index.html")
+            val useServer = true
+            if (useServer) {
+                webView?.loadUrl("${BuildConfig.SERVER_URL}/")
+            } else {
+                // Assets are hosted under http(s)://appassets.androidplatform.net/assets/... .
+                // If the application's assets are in the "main/assets" folder this will read the file
+                // from "main/assets/www/index.html" and load it as if it were hosted on:
+                // https://appassets.androidplatform.net/assets/www/index.html
+                webView?.loadUrl("https://appassets.androidplatform.net/assets/index.html")
+            }
         }
     }
 

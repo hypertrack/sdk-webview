@@ -1,0 +1,4 @@
+alias s := start-server
+
+start-server:
+    bun run src/index.ts
