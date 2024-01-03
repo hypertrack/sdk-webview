@@ -1,4 +1,7 @@
 alias s := start-server
 
 start-server:
+    just -f ../demo-js-frontend/justfile build
+    cp -r ../demo-js-frontend/dist/* static/
+    cp -r ../demo-js-frontend/public/* static/
     bun run src/index.ts

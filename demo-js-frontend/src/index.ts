@@ -1,3 +1,8 @@
+declare var window: any;
+declare var document: any;
+declare var HyperTrack: any;
+declare var HyperTrackWebViewInterface: any;
+
 window.onerror = function (message, _source, _lineno, _colno, _error) {
   alert(`Error: ${message}\n`);
 };
@@ -380,12 +385,12 @@ function requestForegroundLocation() {
   showDialog(
     "Please grant Location permission",
     `This app collects activity and location data \n to  manage your work on the move \n even when the app is closed or not in use\n\n
-    We use this data to:\n
-    - Show your movement history\n
-    - Optimize routes\n
-    - Mark places you visit\n
-    - Make expense claims easier\n
-    - Compute daily stats \n\t\t(like total driven distance)`,
+      We use this data to:\n
+      - Show your movement history\n
+      - Optimize routes\n
+      - Mark places you visit\n
+      - Make expense claims easier\n
+      - Compute daily stats \n\t\t(like total driven distance)`,
     function () {
       if (!HyperTrack.isLocationPermissionGranted()) {
         HyperTrack.requestLocationPermission();
@@ -439,8 +444,8 @@ function requestNotifications() {
   showDialog(
     "Allow Notifications permission",
     `The permission is required by Android OS to launch the service to track your
-    location while the app is in the background \n\n
-    Also the app will notify you about tracking status and any tracking issues.`,
+      location while the app is in the background \n\n
+      Also the app will notify you about tracking status and any tracking issues.`,
     function () {
       if (!HyperTrack.isNotificationsPermissionGranted()) {
         HyperTrack.requestNotificationsPermission();

@@ -14,7 +14,7 @@ const server = Bun.serve({
       path = "index.html";
     }
     let filePath = path.split("?")[0];
-    let file = await Bun.file(`./public/${filePath}`);
+    let file = await Bun.file(`./static/${filePath}`);
     let exists = await file.exists();
     // console.log({
     //   path,
