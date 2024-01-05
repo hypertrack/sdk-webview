@@ -290,6 +290,10 @@ window.onSetNameClick = function () {
   }
 };
 
+window.onStartPermissionsFlowClick = function () {
+  startPermissionsFlow();
+};
+
 window.onSubscribeToListenersClick = function () {
   subscribeToListeners();
 };
@@ -484,5 +488,31 @@ function requestNotifications() {
 }
 
 function onNotificationsGranted() {
+  if (!HyperTrack.isLocationServicesEnabled()) {
+    requestLocationServices();
+  } else {
+    onLocationServicesEnabled();
+  }
+}
+
+function requestLocationServices() {
+  showDialog(
+    "Please enable Location services",
+    `It is required for the app to track your location.`,
+    function () {
+      if (!HyperTrack.isLocationServicesEnabled()) {
+        HyperTrack.openLocationServicesSettings();
+      } else {
+        hideDialog();
+        onLocationServicesEnabled();
+      }
+    },
+    function () {
+      HyperTrack.openLocationServicesSettings();
+    }
+  );
+}
+
+function onLocationServicesEnabled() {
   alert("All permissions are granted");
 }
