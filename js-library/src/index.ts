@@ -461,7 +461,7 @@ let hyperTrackInstance: HyperTrackApi = {
       // JSON.stringify will crash if data is not JSON-compatible
       geotagData = JSON.stringify({
         data,
-        location: {
+        expectedLocation: {
           type: "location",
           value: expectedLocation,
         } as HyperTrackLocationInternal,
