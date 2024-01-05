@@ -1,0 +1,15 @@
+{
+  "name": "demo-ts-frontend",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {},
+  "type": "module",
+  "dependencies": {
+    "hypertrack-sdk-webview": "../js-library"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "demo-js-server",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "hypertrack-sdk-webview": "../js-library"
+  }
+}

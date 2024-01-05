@@ -1,80 +1,185 @@
 package com.hypertrack.sdk.webview.android;
 
 import android.app.Activity;
-import android.content.Context;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 
+/**
+ * This class is used to expose HyperTrack SDK methods to the WebView.
+ * The client should set is as a JavaScript interface for the WebView.
+ * It's written in Java instead of Kotlin for better compatibility with
+ * non-Kotlin projects. The params and return values are JSON strings.
+ */
 public class HyperTrackWebViewJsApi {
 
-    private final Activity activity;
+    private final WebViewInterfaceWrapper wrapper;
 
-    public HyperTrackWebViewJsApi(Activity activity) {
-        this.activity = activity;
+    public HyperTrackWebViewJsApi(
+            Activity activity,
+            WebView webView
+    ) {
+        this.wrapper = new WebViewInterfaceWrapper(activity, webView);
     }
 
-    public static final String API_NAME = "HyperTrack";
+    public static final String API_NAME = "HyperTrackWebViewInterface";
 
     @JavascriptInterface
-    public String addGeotag(String dataJsonString) {
-        return WebViewInterfaceWrapper.INSTANCE.addGeotag(dataJsonString);
+    public String addGeotag(String geotagData) {
+        return wrapper.addGeotag(geotagData);
     }
 
     @JavascriptInterface
-    public String addGeotagWithExpectedLocation(String dataJsonString, String expectedLocationJsonString) {
-        return WebViewInterfaceWrapper.INSTANCE.addGeotagWithExpectedLocation(
-                dataJsonString,
-                expectedLocationJsonString
-        );
+    public String addGeotagWithExpectedLocation(String geotagData) {
+        return wrapper.addGeotagWithExpectedLocation(geotagData);
+    }
+
+    @JavascriptInterface
+    public void cancelLocate() {
+        wrapper.cancelLocate();
     }
 
     @JavascriptInterface
     public String getDeviceId() {
-        return WebViewInterfaceWrapper.INSTANCE.getDeviceId();
+        return wrapper.getDeviceId();
     }
 
     @JavascriptInterface
     public String getErrors() {
-        return WebViewInterfaceWrapper.INSTANCE.getErrors();
+        return wrapper.getErrors();
+    }
+
+    @JavascriptInterface
+    public String getIsAvailable() {
+        return wrapper.getIsAvailable();
+    }
+
+    @JavascriptInterface
+    public String getIsTracking() {
+        return wrapper.getIsTracking();
     }
 
     @JavascriptInterface
     public String getLocation() {
-        return WebViewInterfaceWrapper.INSTANCE.getLocation();
+        return wrapper.getLocation();
+    }
+
+    @JavascriptInterface
+    public String getMetadata() {
+        return wrapper.getMetadata();
+    }
+
+    @JavascriptInterface
+    public String getName() {
+        return wrapper.getName();
+    }
+
+    @JavascriptInterface
+    public void locate() {
+        wrapper.locate();
+    }
+
+    @JavascriptInterface
+    public String isBackgroundLocationPermissionGranted() {
+        return wrapper.isBackgroundLocationPermissionGranted();
+    }
+
+    @JavascriptInterface
+    public String isLocationPermissionGranted() {
+        return wrapper.isLocationPermissionGranted();
+    }
+
+    @JavascriptInterface
+    public String isLocationServicesEnabled() {
+        return wrapper.isLocationServicesEnabled();
+    }
+
+    @JavascriptInterface
+    public String isNotificationsPermissionGranted() {
+        return wrapper.isNotificationsPermissionGranted();
     }
 
     @JavascriptInterface
     public void openAppSettings() {
-        WebViewInterfaceWrapper.INSTANCE.openAppSettings(activity);
+        wrapper.openAppSettings();
+    }
+
+    @JavascriptInterface
+    public void openLocationServicesSettings() {
+        wrapper.openLocationServicesSettings();
     }
 
     @JavascriptInterface
     public void requestLocationPermission() {
-        WebViewInterfaceWrapper.INSTANCE.requestLocationPermission(activity);
+        wrapper.requestLocationPermission();
     }
 
     @JavascriptInterface
     public void requestBackgroundLocationPermission() {
-        WebViewInterfaceWrapper.INSTANCE.requestBackgroundLocationPermission(activity);
+        wrapper.requestBackgroundLocationPermission();
     }
 
     @JavascriptInterface
     public void requestNotificationsPermission() {
-        WebViewInterfaceWrapper.INSTANCE.requestNotificationPermission(activity);
+        wrapper.requestNotificationsPermission();
     }
 
     @JavascriptInterface
-    public void setIsTracking(boolean isTracking) {
-        WebViewInterfaceWrapper.INSTANCE.setIsTracking(isTracking);
+    public void setIsAvailable(String isAvailable) {
+        wrapper.setIsAvailable(isAvailable);
     }
 
     @JavascriptInterface
-    public String setMetadata(String metadataString) {
-        return WebViewInterfaceWrapper.INSTANCE.setMetadata(metadataString);
+    public void setIsTracking(String isTracking) {
+        wrapper.setIsTracking(isTracking);
+    }
+
+    @JavascriptInterface
+    public void setMetadata(String metadata) {
+        wrapper.setMetadata(metadata);
     }
 
     @JavascriptInterface
     public void setName(String name) {
-        WebViewInterfaceWrapper.INSTANCE.setName(name);
+        wrapper.setName(name);
     }
 
+    @JavascriptInterface
+    public void subscribeToErrors() {
+        wrapper.subscribeToErrors();
+    }
+
+    @JavascriptInterface
+    public void subscribeToIsAvailable() {
+        wrapper.subscribeToIsAvailable();
+    }
+
+    @JavascriptInterface
+    public void subscribeToIsTracking() {
+        wrapper.subscribeToIsTracking();
+    }
+
+    @JavascriptInterface
+    public void subscribeToLocation() {
+        wrapper.subscribeToLocation();
+    }
+
+    @JavascriptInterface
+    public void unsubscribeFromErrors() {
+        wrapper.unsubscribeFromErrors();
+    }
+
+    @JavascriptInterface
+    public void unsubscribeFromIsAvailable() {
+        wrapper.unsubscribeFromIsAvailable();
+    }
+
+    @JavascriptInterface
+    public void unsubscribeFromIsTracking() {
+        wrapper.unsubscribeFromIsTracking();
+    }
+
+    @JavascriptInterface
+    public void unsubscribeFromLocation() {
+        wrapper.unsubscribeFromLocation();
+    }
 }

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<script type="module" src="./index.js"></script>
+
+<body>
+    <style>
+        .dialog {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1;
+            /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Black w/ opacity */
+        }
+
+        /* Dialog content */
+        .dialog-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            /* Could be more or less, depending on screen size */
+        }
+    </style>
+
+    <h1>sdk-webview demo</h1>
+    <h4>Device ID:</h4>
+    <p id="device-id">no_data</p>
+
+    <h4>Location:</h4>
+    <p id="location">no_data</p>
+
+    <h4>Errors:</h4>
+    <p id="errors">no_data</p>
+
+    <div>
+        <button onclick="onSetIsTrackingClick(true)">Start tracking</button>
+        <div style="display: inline-block;">
+            <div>Is Tracking:</div>
+            <div id="is-tracking">no_data</div>
+        </div>
+        <button onclick="onSetIsTrackingClick(false)">Stop tracking</button>
+    </div>
+    <br /><br />
+
+    <div>
+        <button onclick="onSetIsAvailableClick(true)">Set available</button>
+        <div style="display: inline-block;">
+            <div>Is Available:</div>
+            <div id="is-available">no_data</div>
+        </div>
+        <button onclick="onSetIsAvailableClick(false)">Set unavailable</button>
+    </div>
+    <br /><br />
+
+    <button onclick="onAddGeotagClick()">Add geotag</button>
+    <br /><br />
+    <button onclick="onAddGeotagWithExpectedLocationClick()">Add geotag with expected location</button>
+    <br /><br />
+    <button onclick="onLocateClick()">Locate user</button>
+    <br /><br />
+    <button onclick="onCancelLocateClick()">Cancel locate user</button>
+    <br /><br />
+    <button onclick="onGetErrorsClick()">Get errors</button>
+    <br /><br />
+    <button onclick="onGetIsAvailableClick()">Get is available</button>
+    <br /><br />
+    <button onclick="onGetIsTrackingClick()">Get is tracking</button>
+    <br /><br />
+    <button onclick="onGetLocationClick()">Get location</button>
+    <br /><br />
+    <button onclick="onSetMetadataClick()">Set metadata</button>
+    <br /><br />
+    <button onclick="onSetNameClick()">Set name</button>
+    <br /><br />
+    <button onclick="onGetMetadataClick()">Get metadata</button>
+    <br /><br />
+    <button onclick="onGetNameClick()">Get name</button>
+    <br /><br />
+    <button onclick="onIsBackgroundLocationPermissionGrantedClick()">Is background location permission granted</button>
+    <br /><br />
+    <button onclick="onIsLocationPermissionGrantedClick()">Is location permission granted</button>
+    <br /><br />
+    <button onclick="onIsLocationServicesEnabledClick()">Is location services enabled</button>
+    <br /><br />
+    <button onclick="onIsNotificationsPermissionGrantedClick()">Is notifications permission granted</button>
+    <br /><br />
+    <button onclick="onOpenAppSettingsClick()">Open app settings</button>
+    <br /><br />
+    <button onclick="onRequestLocationPermissionClick()">Request location permission</button>
+    <br /><br />
+    <button onclick="onRequestBackgroundLocationPermissionClick()">Request background location permission
+    </button>
+    <br /><br />
+    <button onclick="onRequestNotificationsPermissionClick()">Request notifications permission</button>
+    <br /><br />
+    <button onclick="onOpenLocationServicesSettingsClick()">Open location services settings</button>
+    <br /><br />
+    <button onclick="onSubscribeToListenersClick()">Subscribe to listeners</button>
+    <br /><br />
+    <button onclick="onUnsubscribeFromListenersClick()">Unsubscribe from listeners</button>
+    <br /><br />
+    <button onclick="onStartPermissionsFlowClick()">Start permissions flow</button>
+    <br /><br />
+
+    <div id="myDialog" class="dialog">
+        <div class="dialog-content">
+            <h4 id="dialogTitle"></h4>
+            <p id="dialogMessage"></p>
+            <button id="btnPrimary">Proceed</button>
+            <button id="btnSecondary">Open settings</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
