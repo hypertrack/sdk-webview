@@ -1,18 +1,16 @@
-import { HyperTrack, HyperTrackEventReceiver } from "hypertrack-sdk-webview";
-export { HyperTrack, HyperTrackEventReceiver };
+import { HyperTrack } from "hypertrack-sdk-webview";
 
 declare var window: any;
 declare var document: any;
 declare var HyperTrack: any;
-declare var HyperTrackEventReceiver: any;
 
-// declare var HyperTrackWebViewInterface: any;
-
-// console.log(`HyperTrackWebViewInterface: ${HyperTrackWebViewInterface}`);
-console.log(`HyperTrack: ${HyperTrack}`);
-console.log(`HyperTrackEventReceiver: ${HyperTrackEventReceiver}`);
-
-window.onerror = function (message, _source, _lineno, _colno, _error) {
+window.onerror = function (
+  message: any,
+  _source: any,
+  _lineno: any,
+  _colno: any,
+  _error: any
+) {
   alert(`Error: ${message}\n`);
 };
 
@@ -33,7 +31,7 @@ let dialogTitle = document.getElementById("dialogTitle");
 let btnPrimary = document.getElementById("btnPrimary");
 let btnSecondary = document.getElementById("btnSecondary");
 
-window.onclick = function (event) {
+window.onclick = function (event: { target: any }) {
   if (event.target == dialog) {
     hideDialog();
   }
@@ -155,7 +153,7 @@ window.onGetNameClick = function () {
 
 window.onLocateClick = function () {
   try {
-    locateSubscription = HyperTrack.locate(function (locationResult) {
+    locateSubscription = HyperTrack.locate(function (locationResult: any) {
       console.log("locate listener", JSON.stringify(locationResult, null, 2));
       alert(JSON.stringify(locationResult, null, 2));
     });
@@ -266,7 +264,7 @@ window.onRequestNotificationsPermissionClick = function () {
   }
 };
 
-window.onSetIsAvailableClick = function (value) {
+window.onSetIsAvailableClick = function (value: any) {
   try {
     HyperTrack.setIsAvailable(value);
   } catch (e) {
@@ -274,7 +272,7 @@ window.onSetIsAvailableClick = function (value) {
   }
 };
 
-window.onSetIsTrackingClick = function (value) {
+window.onSetIsTrackingClick = function (value: any) {
   try {
     HyperTrack.setIsTracking(value);
   } catch (e) {
@@ -313,7 +311,7 @@ window.onUnsubscribeFromListenersClick = function () {
 };
 
 function subscribeToListeners() {
-  errorsSubscription = HyperTrack.subscribeToErrors(function (errors) {
+  errorsSubscription = HyperTrack.subscribeToErrors(function (errors: any) {
     console.log("errors listener", JSON.stringify(errors, null, 2));
     document.getElementById("errors").innerText = JSON.stringify(
       errors,
@@ -323,7 +321,7 @@ function subscribeToListeners() {
   });
 
   isAvailableSubscription = HyperTrack.subscribeToIsAvailable(function (
-    isAvailable
+    isAvailable: any
   ) {
     console.log("isAvailable listener", JSON.stringify(isAvailable, null, 2));
     document.getElementById("is-available").innerText = JSON.stringify(
@@ -334,7 +332,7 @@ function subscribeToListeners() {
   });
 
   isTrackingSubscription = HyperTrack.subscribeToIsTracking(function (
-    isTracking
+    isTracking: any
   ) {
     console.log("isTracking listener", JSON.stringify(isTracking, null, 2));
     document.getElementById("is-tracking").innerText = JSON.stringify(
@@ -345,7 +343,7 @@ function subscribeToListeners() {
   });
 
   locationSubscription = HyperTrack.subscribeToLocation(function (
-    locationResult
+    locationResult: any
   ) {
     console.log("location listener", JSON.stringify(locationResult, null, 2));
     document.getElementById("location").innerText = JSON.stringify(
@@ -357,13 +355,41 @@ function subscribeToListeners() {
 }
 
 function unsubscribeFromListeners() {
+  if (errorsSubscription) {
+    errorsSubscription.cancel();
+    errorsSubscription = null;
+  }
+  if (isAvailableSubscription) {
+    isAvailableSubscription.cancel();
+    isAvailableSubscription = null;
+  }
+  if (isTrackingSubscription) {
+    isTrackingSubscription.cancel();
+    isTrackingSubscription = null;
+  }
+  if (locateSubscription) {
+    locateSubscription.cancel();
+    locateSubscription = null;
+  }
   if (locationSubscription) {
     locationSubscription.cancel();
     locationSubscription = null;
   }
 }
 
-function showDialog(title, text, onPrimaryClick, onSecondaryClick) {
+function showDialog(
+  title: string,
+  text: string,
+  onPrimaryClick: { (): void; (): void; (): void; (): void },
+  onSecondaryClick: {
+    (): void;
+    (): void;
+    (): void;
+    (): void;
+    (): void;
+    toString?: any;
+  }
+) {
   dialog.style.display = "block";
   dialogMessage.innerText = text;
   dialogTitle.innerText = title;
