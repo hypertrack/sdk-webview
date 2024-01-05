@@ -1,9 +1,0 @@
-alias s := start-server
-
-start-server:
-    just -f ../demo-ts-frontend/justfile build
-    rm -rf static
-    mkdir static
-    cp -r ../demo-ts-frontend/dist/* static/
-    cp -r ../demo-ts-frontend/public/* static/
-    bun run src/index.ts
