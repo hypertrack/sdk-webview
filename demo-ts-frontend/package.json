@@ -1,5 +1,5 @@
 {
-  "name": "demo-js-frontend",
+  "name": "demo-ts-frontend",
   "module": "index.ts",
   "devDependencies": {
     "@types/bun": "latest"

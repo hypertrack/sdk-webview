@@ -2,7 +2,6 @@ import { HyperTrack } from "hypertrack-sdk-webview";
 
 declare var window: any;
 declare var document: any;
-declare var HyperTrack: any;
 
 window.onerror = function (
   message: any,
@@ -13,17 +12,6 @@ window.onerror = function (
 ) {
   alert(`Error: ${message}\n`);
 };
-
-// if (!HyperTrackWebViewInterface) {
-//   alert(
-//     "HyperTrackWebViewInterface is not defined. Please check if SDK is properly integrated."
-//   );
-// }
-// if (!HyperTrack) {
-//   alert(
-//     "HyperTrack is not defined. Please check if SDK is properly integrated."
-//   );
-// }
 
 let dialog = document.getElementById("myDialog");
 let dialogMessage = document.getElementById("dialogMessage");
