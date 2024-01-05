@@ -2,7 +2,7 @@
 declare var HyperTrackWebViewInterface: HyperTrackWebViewInterfaceApi;
 export { HyperTrack };
 
-// All names have HyperTrack prefix to avoid name collisions
+// All names have HyperTrack prefix to avoid name collisions when importing as a file
 
 /** @ignore */
 interface HyperTrackWebViewInterfaceApi {
@@ -391,24 +391,56 @@ let hyperTrackLocateListener:
     ) => void)
   | undefined;
 
-/** @ignore */
+const HYPERTRACK_ADD_GEOTAG_VALIDATION_ERROR = new Error(
+  "You should provide a JSON-compatible object as data param"
+);
+const HYPERTRACK_ADD_GEOTAG_WITH_EXPECTED_LOCATION_VALIDATION_ERROR = new Error(
+  "You should provide a JSON-compatible object as data param and expectedLocation should be a valid location object"
+);
+const HYPERTRACK_SET_IS_AVAILABLE_VALIDATION_ERROR = new Error(
+  "isAvailable should be a boolean value"
+);
+const HYPERTRACK_SET_IS_TRACKING_VALIDATION_ERROR = new Error(
+  "isTracking should be a boolean value"
+);
+const HYPERTRACK_SET_NAME_VALIDATION_ERROR = new Error(
+  "You should provide a string as name param"
+);
+const HYPERTRACK_SET_METADATA_VALIDATION_ERROR = new Error(
+  "You should provide a JSON-compatible object as metadata param"
+);
+const HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR = new Error(
+  "HyperTrack WebView interface is not defined. Please make sure you have integrated the native part of the SDK correctly."
+);
+
+/**
+ * @ignore
+ *
+ * The convention for errors here is that we crash on any error that prevents mutation
+ * methods (addGeotag, setMetadata, setIsTracking, etc) from execution, and swallow
+ * errors, print them to console and return a stub result for non-mutation methods.
+ * Also we don't handle parsing errors, because they should never happen as we control
+ * the data from the both JS and native sides.
+ */
 let hyperTrackInstance: HyperTrackApi = {
   addGeotag(
     data: Object
   ): HyperTrackResult<HyperTrackLocation, HyperTrackLocationError> {
     if (!data) {
-      throw new Error(
-        "You should provide a JSON-compatible object as data param"
-      );
+      throw HYPERTRACK_ADD_GEOTAG_VALIDATION_ERROR;
     }
+    let geotagData: string;
+    try {
+      // JSON.stringify will crash if data is not JSON-compatible
+      geotagData = JSON.stringify({
+        data,
+      } as HyperTrackGeotagData);
+    } catch (e) {
+      throw HYPERTRACK_ADD_GEOTAG_VALIDATION_ERROR;
+    }
+    // not handling crashes, mutation method
     return hyperTrackDeserializeLocationResponse(
-      JSON.parse(
-        HyperTrackWebViewInterface.addGeotag(
-          JSON.stringify({
-            data,
-          } as HyperTrackGeotagData)
-        )
-      )
+      JSON.parse(HyperTrackWebViewInterface.addGeotag(geotagData))
     );
   },
 
@@ -420,40 +452,63 @@ let hyperTrackInstance: HyperTrackApi = {
     HyperTrackLocationError
   > {
     if (!data || !expectedLocation || !hyperTrackIsLocation(expectedLocation)) {
-      throw new Error(
-        "You should provide a JSON-compatible object as data param and expectedLocation should be a valid location object"
-      );
+      throw HYPERTRACK_ADD_GEOTAG_WITH_EXPECTED_LOCATION_VALIDATION_ERROR;
+    }
+    let geotagData: string;
+    try {
+      // JSON.stringify will crash if data is not JSON-compatible
+      geotagData = JSON.stringify({
+        data,
+        location: {
+          type: "location",
+          value: expectedLocation,
+        } as HyperTrackLocationInternal,
+      } as HyperTrackGeotagData);
+    } catch (e) {
+      throw HYPERTRACK_ADD_GEOTAG_WITH_EXPECTED_LOCATION_VALIDATION_ERROR;
+    }
+    // not handling crashes, mutation method
+    if (HyperTrackWebViewInterface === undefined) {
+      throw HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR;
     }
     return hyperTrackDeserializeLocationWithDeviationResponse(
       JSON.parse(
-        HyperTrackWebViewInterface.addGeotagWithExpectedLocation(
-          JSON.stringify({
-            data,
-            location: {
-              type: "location",
-              value: expectedLocation,
-            } as HyperTrackLocationInternal,
-          } as HyperTrackGeotagData)
-        )
+        HyperTrackWebViewInterface.addGeotagWithExpectedLocation(geotagData)
       )
     );
   },
 
   getDeviceId: function (): string {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return "";
+    }
     return JSON.parse(HyperTrackWebViewInterface.getDeviceId()).value;
   },
 
   getErrors: function (): HyperTrackError[] {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERRORS_VALUE;
+    }
     return hyperTrackDeserializeHyperTrackErrors(
       JSON.parse(HyperTrackWebViewInterface.getErrors())
     );
   },
 
   getIsAvailable: function (): boolean {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return false;
+    }
     return JSON.parse(HyperTrackWebViewInterface.getIsAvailable()).value;
   },
 
   getIsTracking: function (): boolean {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return false;
+    }
     return JSON.parse(HyperTrackWebViewInterface.getIsTracking()).value;
   },
 
@@ -461,24 +516,40 @@ let hyperTrackInstance: HyperTrackApi = {
     HyperTrackLocation,
     HyperTrackLocationError
   > {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return HYPERTRACK_MISSING_WEBVIEW_INTERFACE_LOCATION_RESULT_VALUE;
+    }
     return hyperTrackDeserializeLocationResponse(
       JSON.parse(HyperTrackWebViewInterface.getLocation())
     );
   },
 
   getMetadata: function (): Object {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return {};
+    }
     return hyperTrackDeserializeMetadata(
       JSON.parse(HyperTrackWebViewInterface.getMetadata())
     );
   },
 
   getName: function (): string {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return "";
+    }
     return hyperTrackDeserializeName(
       JSON.parse(HyperTrackWebViewInterface.getName())
     );
   },
 
   isBackgroundLocationPermissionGranted: function (): boolean {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return false;
+    }
     let result = JSON.parse(
       HyperTrackWebViewInterface.isBackgroundLocationPermissionGranted()
     ) as HyperTrackIsBackgroundLocationPermissionGranted;
@@ -489,6 +560,10 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   isLocationPermissionGranted: function (): boolean {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return false;
+    }
     let result = JSON.parse(
       HyperTrackWebViewInterface.isLocationPermissionGranted()
     ) as HyperTrackIsLocationPermissionGranted;
@@ -499,6 +574,10 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   isLocationServicesEnabled: function (): boolean {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return false;
+    }
     let result = JSON.parse(
       HyperTrackWebViewInterface.isLocationServicesEnabled()
     ) as HyperTrackIsLocationServicesEnabled;
@@ -509,6 +588,10 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   isNotificationsPermissionGranted: function (): boolean {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return false;
+    }
     let result = JSON.parse(
       HyperTrackWebViewInterface.isNotificationsPermissionGranted()
     ) as HyperTrackIsNotificationsPermissionGranted;
@@ -523,6 +606,17 @@ let hyperTrackInstance: HyperTrackApi = {
       location: HyperTrackResult<HyperTrackLocation, HyperTrackError[]>
     ) => void
   ): HyperTrackSubscription {
+    if (HyperTrackWebViewInterface === undefined) {
+      setTimeout(() => {
+        callback({
+          type: "failure",
+          value: HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERRORS_VALUE,
+        });
+      }, 0);
+      return {
+        cancel: () => {},
+      };
+    }
     hyperTrackLocateListener = callback;
     HyperTrackWebViewInterface.locate();
     return {
@@ -534,28 +628,52 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   openAppSettings: function (): void {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return;
+    }
     HyperTrackWebViewInterface.openAppSettings();
   },
 
   openLocationServicesSettings: function (): void {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return;
+    }
     HyperTrackWebViewInterface.openLocationServicesSettings();
   },
 
   requestBackgroundLocationPermission: function (): void {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return;
+    }
     HyperTrackWebViewInterface.requestBackgroundLocationPermission();
   },
 
   requestLocationPermission: function (): void {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return;
+    }
     HyperTrackWebViewInterface.requestLocationPermission();
   },
 
   requestNotificationsPermission: function (): void {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      return;
+    }
     HyperTrackWebViewInterface.requestNotificationsPermission();
   },
 
   setIsAvailable: function (isAvailable: boolean): void {
+    // not handling crashes, mutation method
+    if (HyperTrackWebViewInterface === undefined) {
+      throw HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR;
+    }
     if (typeof isAvailable !== "boolean") {
-      throw new Error("isAvailable should be a boolean value");
+      throw HYPERTRACK_SET_IS_AVAILABLE_VALIDATION_ERROR;
     }
     HyperTrackWebViewInterface.setIsAvailable(
       JSON.stringify({
@@ -566,8 +684,12 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   setIsTracking: function (isTracking: boolean): void {
+    // not handling crashes, mutation method
+    if (HyperTrackWebViewInterface === undefined) {
+      throw HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR;
+    }
     if (typeof isTracking !== "boolean") {
-      throw new Error("isTracking should be a boolean value");
+      throw HYPERTRACK_SET_IS_TRACKING_VALIDATION_ERROR;
     }
     HyperTrackWebViewInterface.setIsTracking(
       JSON.stringify({
@@ -578,22 +700,29 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   setMetadata: function (metadata: Object): void {
-    if (!metadata) {
-      throw new Error(
-        "You should provide a JSON-compatible object as metadata param"
-      );
+    // not handling crashes, mutation method
+    if (HyperTrackWebViewInterface === undefined) {
+      throw HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR;
     }
-    HyperTrackWebViewInterface.setMetadata(
-      JSON.stringify({
+    if (!metadata) {
+      throw HYPERTRACK_SET_METADATA_VALIDATION_ERROR;
+    }
+    let metadataString: string;
+    try {
+      // JSON.stringify will crash if metadata is not JSON-compatible
+      metadataString = JSON.stringify({
         type: "metadata",
         value: metadata,
-      } as HyperTrackMetadata)
-    );
+      } as HyperTrackMetadata);
+    } catch (e) {
+      throw HYPERTRACK_SET_METADATA_VALIDATION_ERROR;
+    }
+    HyperTrackWebViewInterface.setMetadata(metadataString);
   },
 
   setName: function (name: string): void {
-    if (name != undefined && typeof name !== "string") {
-      throw new Error("You should provide a string as name param");
+    if (typeof name !== "string") {
+      throw HYPERTRACK_SET_NAME_VALIDATION_ERROR;
     }
     HyperTrackWebViewInterface.setName(
       JSON.stringify({
@@ -606,6 +735,15 @@ let hyperTrackInstance: HyperTrackApi = {
   subscribeToErrors: function (
     listener: (errors: HyperTrackError[]) => void
   ): HyperTrackSubscription {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      setTimeout(() => {
+        listener(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERRORS_VALUE);
+      }, 0);
+      return {
+        cancel: () => {},
+      };
+    }
     hyperTrackErrorsListener = listener;
     HyperTrackWebViewInterface.subscribeToErrors();
     return {
@@ -619,6 +757,15 @@ let hyperTrackInstance: HyperTrackApi = {
   subscribeToIsAvailable: function (
     listener: (isAvailable: boolean) => void
   ): HyperTrackSubscription {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      setTimeout(() => {
+        listener(false);
+      }, 0);
+      return {
+        cancel: () => {},
+      };
+    }
     hyperTrackIsAvailableListener = listener;
     HyperTrackWebViewInterface.subscribeToIsAvailable();
     return {
@@ -632,6 +779,15 @@ let hyperTrackInstance: HyperTrackApi = {
   subscribeToIsTracking: function (
     listener: (isTracking: boolean) => void
   ): HyperTrackSubscription {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      setTimeout(() => {
+        listener(false);
+      }, 0);
+      return {
+        cancel: () => {},
+      };
+    }
     hyperTrackIsTrackingListener = listener;
     HyperTrackWebViewInterface.subscribeToIsTracking();
     return {
@@ -647,6 +803,15 @@ let hyperTrackInstance: HyperTrackApi = {
       location: HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>
     ) => void
   ): HyperTrackSubscription {
+    if (HyperTrackWebViewInterface === undefined) {
+      console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
+      setTimeout(() => {
+        listener(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_LOCATION_RESULT_VALUE);
+      }, 0);
+      return {
+        cancel: () => {},
+      };
+    }
     hyperTrackLocationListener = listener;
     HyperTrackWebViewInterface.subscribeToLocation();
     return {
@@ -1065,3 +1230,17 @@ type HyperTrackFailure<F> = {
 };
 
 type HyperTrackResult<S, F> = HyperTrackSuccess<S> | HyperTrackFailure<F>;
+
+const HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERRORS_VALUE = [
+  HyperTrackError.locationServicesUnavailable,
+  HyperTrackError.blockedFromRunning,
+];
+const HYPERTRACK_MISSING_WEBVIEW_INTERFACE_LOCATION_RESULT_VALUE: HyperTrackResult<
+  HyperTrackLocation,
+  HyperTrackLocationError
+> = {
+  type: "failure",
+  value: {
+    type: "notRunning",
+  },
+};
