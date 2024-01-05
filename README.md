@@ -55,4 +55,4 @@ let deviceId = HyperTrack.getDeviceId();
 
 ## API Reference
 
-[API Reference](js-library/docs/index.html)
+[API Reference](https://hypertrack.github.io/sdk-webview/)
