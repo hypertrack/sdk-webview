@@ -2,6 +2,7 @@ alias b := build
 alias ca := copy-js-to-android
 
 build:
+    yarn
     yarn build
 
 copy-js-to-android: build
