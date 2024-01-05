@@ -468,7 +468,7 @@ let hyperTrackInstance: HyperTrackApi = {
       throw HYPERTRACK_ADD_GEOTAG_WITH_EXPECTED_LOCATION_VALIDATION_ERROR;
     }
     // not handling crashes, mutation method
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       throw HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR;
     }
     return hyperTrackDeserializeLocationWithDeviationResponse(
@@ -479,7 +479,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   getDeviceId: function (): string {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return "";
     }
@@ -487,7 +487,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   getErrors: function (): HyperTrackError[] {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERRORS_VALUE;
     }
@@ -497,7 +497,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   getIsAvailable: function (): boolean {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return false;
     }
@@ -505,7 +505,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   getIsTracking: function (): boolean {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return false;
     }
@@ -516,7 +516,7 @@ let hyperTrackInstance: HyperTrackApi = {
     HyperTrackLocation,
     HyperTrackLocationError
   > {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return HYPERTRACK_MISSING_WEBVIEW_INTERFACE_LOCATION_RESULT_VALUE;
     }
@@ -526,7 +526,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   getMetadata: function (): Object {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return {};
     }
@@ -536,7 +536,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   getName: function (): string {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return "";
     }
@@ -546,7 +546,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   isBackgroundLocationPermissionGranted: function (): boolean {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return false;
     }
@@ -560,7 +560,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   isLocationPermissionGranted: function (): boolean {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return false;
     }
@@ -574,7 +574,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   isLocationServicesEnabled: function (): boolean {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return false;
     }
@@ -588,7 +588,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   isNotificationsPermissionGranted: function (): boolean {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return false;
     }
@@ -606,7 +606,7 @@ let hyperTrackInstance: HyperTrackApi = {
       location: HyperTrackResult<HyperTrackLocation, HyperTrackError[]>
     ) => void
   ): HyperTrackSubscription {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       setTimeout(() => {
         callback({
           type: "failure",
@@ -628,7 +628,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   openAppSettings: function (): void {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return;
     }
@@ -636,7 +636,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   openLocationServicesSettings: function (): void {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return;
     }
@@ -644,7 +644,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   requestBackgroundLocationPermission: function (): void {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return;
     }
@@ -652,7 +652,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   requestLocationPermission: function (): void {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return;
     }
@@ -660,7 +660,7 @@ let hyperTrackInstance: HyperTrackApi = {
   },
 
   requestNotificationsPermission: function (): void {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       return;
     }
@@ -669,7 +669,7 @@ let hyperTrackInstance: HyperTrackApi = {
 
   setIsAvailable: function (isAvailable: boolean): void {
     // not handling crashes, mutation method
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       throw HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR;
     }
     if (typeof isAvailable !== "boolean") {
@@ -685,7 +685,7 @@ let hyperTrackInstance: HyperTrackApi = {
 
   setIsTracking: function (isTracking: boolean): void {
     // not handling crashes, mutation method
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       throw HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR;
     }
     if (typeof isTracking !== "boolean") {
@@ -701,7 +701,7 @@ let hyperTrackInstance: HyperTrackApi = {
 
   setMetadata: function (metadata: Object): void {
     // not handling crashes, mutation method
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       throw HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR;
     }
     if (!metadata) {
@@ -735,7 +735,7 @@ let hyperTrackInstance: HyperTrackApi = {
   subscribeToErrors: function (
     listener: (errors: HyperTrackError[]) => void
   ): HyperTrackSubscription {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       setTimeout(() => {
         listener(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERRORS_VALUE);
@@ -757,7 +757,7 @@ let hyperTrackInstance: HyperTrackApi = {
   subscribeToIsAvailable: function (
     listener: (isAvailable: boolean) => void
   ): HyperTrackSubscription {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       setTimeout(() => {
         listener(false);
@@ -779,7 +779,7 @@ let hyperTrackInstance: HyperTrackApi = {
   subscribeToIsTracking: function (
     listener: (isTracking: boolean) => void
   ): HyperTrackSubscription {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       setTimeout(() => {
         listener(false);
@@ -803,7 +803,7 @@ let hyperTrackInstance: HyperTrackApi = {
       location: HyperTrackResult<HyperTrackLocation, HyperTrackLocationError>
     ) => void
   ): HyperTrackSubscription {
-    if (HyperTrackWebViewInterface === undefined) {
+    if (typeof HyperTrackWebViewInterface === "undefined") {
       console.error(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR);
       setTimeout(() => {
         listener(HYPERTRACK_MISSING_WEBVIEW_INTERFACE_LOCATION_RESULT_VALUE);
