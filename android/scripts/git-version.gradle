@@ -55,12 +55,14 @@ import org.ajoberstar.grgit.Grgit
 ext {
     git = Grgit.open(currentDir: projectDir)
 
+    def ANDROID_PREFIX = "android/"
+
     def alphaPrePremierePostfix = "alpha"
     def betaPrePremierePostfix = "beta"
     def releaseCandidatePrePremierePostfix = "rc"
     def prePremierePostfixes = "-($alphaPrePremierePostfix|$betaPrePremierePostfix|$releaseCandidatePrePremierePostfix)"
 
-    def tagPattern = ~("^[0-9]+\\.[0-9]+\\.[0-9]+($prePremierePostfixes(\\.[0-9]+))*\$")
+    def tagPattern = ~("^${ANDROID_PREFIX}[0-9]+\\.[0-9]+\\.[0-9]+($prePremierePostfixes(\\.[0-9]+))*\$")
 
     def head = git.head()
     def headTag = git.tag.list().find { tag ->
@@ -72,11 +74,16 @@ ext {
     if (gitVersionName == null) {
         gitVersionName = "0.0.0"
     } else {
-        gitVersionName = gitVersionName
+        if(!gitVersionName.startsWith(ANDROID_PREFIX)) {
+            throw new GradleException("Tag name must start with 'android/' prefix")
+        }
+        gitVersionName = gitVersionName.substring(ANDROID_PREFIX.length())
     }
 
+    println(headTag)
+
     if (headTag) {
-        gitVersionName = headTag.getName()
+        gitVersionName = headTag.getName().substring(ANDROID_PREFIX.length())
 
         def majorMinorPatchMatch = (gitVersionName =~ /(\d+)\.(\d+)\.(\d+)/)
         def stageRevisionMatch = (gitVersionName =~ ~("$prePremierePostfixes\\.(\\d+)"))
