@@ -417,9 +417,11 @@ const HYPERTRACK_MISSING_WEBVIEW_INTERFACE_ERROR = new Error(
  * @ignore
  *
  * The convention for errors here is that we crash on any error that prevents mutation
- * methods (addGeotag, setMetadata, setIsTracking, etc) from execution, and swallow
- * errors, print them to console and return a stub result for non-mutation methods.
- * Also we don't handle parsing errors, because they should never happen as we control
+ * methods (addGeotag, setMetadata, setIsTracking, etc) from execution, and swallow all
+ * other errors, print them to console and return a stub result for non-mutation methods.
+ * But the layers underneeth already handle all the errors except for parsing ones, so
+ * there is no need for explicit error handling here.
+ * We don't handle parsing errors, because they should never happen as we control
  * the data from the both JS and native sides.
  */
 let hyperTrackInstance: HyperTrackApi = {
