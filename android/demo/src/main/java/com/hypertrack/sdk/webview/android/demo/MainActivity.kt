@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val useLocalAssets = false
+
         val assetLoader: WebViewAssetLoader = WebViewAssetLoader.Builder()
             .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
             .build()
@@ -38,39 +40,39 @@ class MainActivity : AppCompatActivity() {
             settings.allowContentAccess = false
 
             webViewClient = object : WebViewClientCompat() {
-//                override fun shouldInterceptRequest(
-//                    view: WebView?,
-//                    request: WebResourceRequest
-//                ): WebResourceResponse? {
-//                    return assetLoader.shouldInterceptRequest(request.url)
-//                }
-//
-//                @Suppress("OVERRIDE_DEPRECATION")
-//                override fun shouldInterceptRequest(
-//                    view: WebView?,
-//                    url: String?
-//                ): WebResourceResponse? {
-//                    return assetLoader.shouldInterceptRequest(Uri.parse(url))
-//                }
-            }
+                override fun shouldInterceptRequest(
+                    view: WebView?,
+                    request: WebResourceRequest
+                ): WebResourceResponse? {
+                    return if(useLocalAssets) {
+                        assetLoader.shouldInterceptRequest(request.url)
+                    } else {
+                        super.shouldInterceptRequest(view, request)
+                    }
+                }
 
-            webChromeClient = object : WebChromeClient() {
-
-//                override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
-//                    Log.e("HT-DEBUG", consoleMessage?.message() ?: "no data");
-//                    return true
-//                }
+                @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
+                override fun shouldInterceptRequest(
+                    view: WebView?,
+                    url: String?
+                ): WebResourceResponse? {
+                    return if(useLocalAssets) {
+                        assetLoader.shouldInterceptRequest(Uri.parse(url))
+                    } else {
+                        super.shouldInterceptRequest(view, url)
+                    }
+                }
             }
 
             addJavascriptInterface(TestInterface, "TestInterface")
+
             addJavascriptInterface(
                 HyperTrackWebViewJsApi(this@MainActivity, webView), HyperTrackWebViewJsApi.API_NAME
             )
         }
 
         if (savedInstanceState == null) {
-            val useServer = true
-            if (useServer) {
+            if (!useLocalAssets) {
                 webView?.loadUrl("${BuildConfig.SERVER_URL}/")
             } else {
                 // Assets are hosted under http(s)://appassets.androidplatform.net/assets/... .
