@@ -1,6 +1,6 @@
 {
   "name": "hypertrack-sdk-webview",
-  "version": "1.0.0",
+  "version": "1.0.0-rc.1",
   "description": "A wrapper around HyperTrack SDK to be used in mobile WebView",
   "main": "dist/index.js",
   "license": "MIT",
